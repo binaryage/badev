@@ -1,0 +1,15 @@
+<% # prepare shared values %>
+<%= include("partials/shared_begin") %>
+
+<% # all projects include common configuration %>
+<%= include("partials/common") %>
+
+<% # add configuration specific values %>
+<%= include("partials/debug") if @configuration=="Debug" %>
+<%= include("partials/release") if @configuration=="Release" %>
+
+<% # product-related configurations %>
+<%= include("partials/totalfinder/config") %>
+
+<% # this file must go last to generate shared values %>
+<%= include("partials/shared_end") %>

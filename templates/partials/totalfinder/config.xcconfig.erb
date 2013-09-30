@@ -1,0 +1,49 @@
+<% # totalfinder-specific logic %>
+<%
+
+$plugins = [
+  'ColorfulSidebar',
+  'CopyPathMenu',
+  'DockProgressBar',
+  'FoldersOnTop',
+  'PublishBox',
+  'Tabs',
+  'TerminalLink',
+  'Visor',
+  'ColumnViewAutoWidth',
+  'CutAndPaste',
+  'FileBrowsing',
+  'NoDesktopDots',
+  'SystemFiles',
+  'Template',
+  'Tests'
+]
+$frameworks = %w(BAKit TotalKit Sparkle)
+$utils = %w(Agent)
+
+def is_totalfinder_plugin?
+  $plugins.include? @project and $plugins.include? @target
+end
+
+def is_totalfinder_framework?
+  $frameworks.include? @project and $frameworks.include? @target
+end
+
+def is_totalfinder_utility?
+  $utils.include? @project and $utils.include? @target
+end
+
+def is_totalfinder?
+  return true if $utils.include? @project
+  return true if $frameworks.include? @project
+  return true if $plugins.include? @project
+  return false
+end
+
+%>
+
+<%= include("base") if is_totalfinder? %>
+<%= include("debug") if is_totalfinder? and @configuration=="Debug" %>
+<%= include("release") if is_totalfinder? and @configuration=="Release" %>
+<%= include("plugin") if is_totalfinder_plugin? %>
+<%= include("framework") if is_totalfinder_framework? %>

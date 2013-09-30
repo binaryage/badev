@@ -1,0 +1,12 @@
+///
+/// Dynamic configuration collected from all sections above
+///
+<%=
+  shared_lines = []
+  $shared.each do |key, values|
+    vals = values.join(" ")
+    shared_lines << "#{key} = #{vals}" unless values.empty?
+  end
+
+  shared_lines.join("\n")
+%>
