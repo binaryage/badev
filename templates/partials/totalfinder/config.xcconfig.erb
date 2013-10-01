@@ -50,6 +50,7 @@ def is_totalfinder_shell?
 end
 
 def is_bundle?
+  return true if is_totalfinder_plugin?
   return true if is_totalfinder_shell?
 end
 
