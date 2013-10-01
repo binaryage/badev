@@ -61,7 +61,7 @@ module Badev
       settings_list.each do |settings|
         export += "\n"
         settings.each do |key, value|
-          export += make_xcconfig_line(key, value) + "\n"
+          export += "// " + make_xcconfig_line(key, value) + "\n"
         end
       end
 
@@ -81,7 +81,7 @@ module Badev
           # TODO: here we should sanitize filenames for bad characters
           filename = File.join(dest, "#{basename}_#{conf.name}_#{target.name}.xcconfig")
           destname = (File.basename filename, ".xcconfig") + "_generated.xcconfig"
-          unless false and File.exists? filename
+          unless File.exists? filename
             content = build_default_xcconfig(destname, basename, conf.name, target.name, [configuration_settings, target_settings])
             File.open(filename, 'w') { |file| file.write(content) }
             relpath = "./"+Pathname.new(filename).relative_path_from(Pathname.new(Dir.pwd)).to_s

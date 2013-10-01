@@ -1,0 +1,9 @@
+///
+/// Specific configuration for TotalFinder shell
+///
+
+GCC_PREFIX_HEADER = TotalFinder.pch
+INFOPLIST_FILE = Info.plist
+PRODUCT_NAME = TotalFinder
+
+<% $shared["HEADER_SEARCH_PATHS"] << "$(SRCROOT)/../headers" if is_totalfinder_shell? %>

@@ -79,10 +79,6 @@ GCC_PRECOMPILE_PREFIX_HEADER = YES
 // location
 GCC_STRICT_ALIASING = YES
 
-// Whether symbols not explicitly exported are hidden by default (this primarily
-// only affects C++ code)
-GCC_SYMBOLS_PRIVATE_EXTERN = NO
-
 // Whether static variables are thread-safe by default
 GCC_THREADSAFE_STATICS = NO
 
@@ -135,7 +131,7 @@ GCC_WARN_MISSING_PARENTHESES = YES
 GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES
 
 // Warn if a "@selector(...)" expression referring to an undeclared selector is found
-GCC_WARN_UNDECLARED_SELECTOR = YES
+//GCC_WARN_UNDECLARED_SELECTOR = YES
 
 // Whether to warn about variables that are not initialized before being used
 GCC_WARN_UNINITIALIZED_AUTOS = YES
@@ -160,3 +156,5 @@ TEST_AFTER_BUILD = NO
 
 // Disable legacy-compatible header searching
 ALWAYS_SEARCH_USER_PATHS = NO
+
+PRODUCT_NAME = <%=@target%>

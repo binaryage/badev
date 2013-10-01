@@ -18,12 +18,15 @@ CLANG_WARN_EMPTY_BODY = YES
 CLANG_WARN__DUPLICATE_METHOD_MATCH = YES
 GCC_WARN_ABOUT_RETURN_TYPE = YES
 
+COMBINE_HIDPI_IMAGES = YES
+
 DEBUG_INFORMATION_FORMAT = dwarf-with-dsym
 
-INFOPLIST_FILE = <%= @project %>-Info.plist
+INFOPLIST_FILE = <%= @target %>-Info.plist
 
 GCC_PRECOMPILE_PREFIX_HEADER = YES
-GCC_PREFIX_HEADER = <%= @project %>-Prefix.pch
+GCC_PREFIX_HEADER = <%= @target %>-Prefix.pch
+GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES
 
 <% $shared["WARNING_CFLAGS"] << "-Wthread-safety" << "-Wthread-safety-beta" %>
 <% $shared["GCC_PREPROCESSOR_DEFINITIONS"] << "PROJECT=#{@project}" %>
