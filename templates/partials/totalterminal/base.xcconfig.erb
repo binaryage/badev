@@ -1,0 +1,33 @@
+///
+/// Base configuration for all TotalTerminal projects
+///
+
+// TotalTerminal should run on 10.7+
+MACOSX_DEPLOYMENT_TARGET = 10.7
+SDKROOT = macosx
+
+// use modern C++ and stdlib
+CLANG_CXX_LIBRARY = libc++
+CLANG_CXX_LANGUAGE_STANDARD = c++0x
+CLANG_ENABLE_MODULES = YES
+
+// some exotic warnings we want enabled
+GCC_WARN_UNINITIALIZED_AUTOS = YES
+GCC_WARN_UNUSED_VARIABLE = YES
+CLANG_WARN_EMPTY_BODY = YES
+CLANG_WARN__DUPLICATE_METHOD_MATCH = YES
+GCC_WARN_ABOUT_RETURN_TYPE = YES
+
+COMBINE_HIDPI_IMAGES = YES
+
+DEBUG_INFORMATION_FORMAT = dwarf-with-dsym
+
+INFOPLIST_FILE = <%= @target %>-Info.plist
+
+GCC_PRECOMPILE_PREFIX_HEADER = YES
+GCC_PREFIX_HEADER = <%= @target %>-Prefix.pch
+GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES
+
+<% $shared["WARNING_CFLAGS"] << "-Wthread-safety" << "-Wthread-safety-beta" %>
+<% $shared["GCC_PREPROCESSOR_DEFINITIONS"] << "PROJECT=#{@project}" %>
+<% $shared["OTHER_LDFLAGS"] << "-undefined dynamic_lookup" << "-headerpad_max_install_names" %>
