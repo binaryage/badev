@@ -1,7 +1,7 @@
 // totalterminal-specific logic
 <%
 
-$helpers = %w(TotalTerminal TotalTerminal-osax Agent Uninstaller CrashWatcher)
+$helpers = %w(TotalTerminal TotalTerminal-osax)
 
 def is_totalterminal_helper?
   $helpers.include? @project
@@ -17,11 +17,7 @@ def is_totalterminal_shell?
 end
 
 def is_bundle?
-  return true if is_totalfinder_shell?
-end
-
-def is_app?
-  ["Uninstaller", "Agent", "CrashWatcher"].include? @target
+  return true if is_totalterminal_shell?
 end
 
 def is_osax?
@@ -34,6 +30,5 @@ end
 <%= include("debug") if is_totalterminal? and @configuration=="Debug" %>
 <%= include("release") if is_totalterminal? and @configuration=="Release" %>
 <%= include("shell") if is_totalterminal_shell? %>
-<%= include("app") if is_app? %>
 <%= include("bundle") if is_bundle? %>
 <%= include("osax") if is_osax? %>
