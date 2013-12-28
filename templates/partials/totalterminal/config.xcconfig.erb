@@ -27,8 +27,8 @@ end
 %>
 
 <%= include("base") if is_totalterminal? %>
-<%= include("debug") if is_totalterminal? and @configuration=="Debug" %>
-<%= include("release") if is_totalterminal? and @configuration=="Release" %>
+<%= include("debug") if is_totalterminal? and debug_configuration? %>
+<%= include("release") if is_totalterminal? and release_configuration? %>
 <%= include("shell") if is_totalterminal_shell? %>
 <%= include("bundle") if is_bundle? %>
 <%= include("osax") if is_osax? %>

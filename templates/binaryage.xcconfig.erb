@@ -1,3 +1,6 @@
+// include helper functions
+<%= include("helpers/configurations") %>
+
 // prepare shared values
 <%= include("partials/shared_begin") %>
 
@@ -5,8 +8,8 @@
 <%= include("partials/common") %>
 
 // add configuration specific values
-<%= include("partials/debug") if @configuration=="Debug" %>
-<%= include("partials/release") if @configuration=="Release" %>
+<%= include("partials/debug") if debug_configuration? %>
+<%= include("partials/release") if release_configuration? %>
 
 // product-related configurations
 <%= include("partials/totalfinder/config") %>
