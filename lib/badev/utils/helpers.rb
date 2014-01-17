@@ -2,18 +2,32 @@ module Badev
   module Helpers
 
     extend self
+    
+    def indent(how="  ")
+      old_indent = $indent
+      $indent += how
+      yield()
+      $indent = old_indent
+    end
+    
+    def puts(x)
+      Kernel.puts $indent+x
+    end
 
-    def sys(cmd)
-      puts ">#{cmd.yellow}"
-      unless system(cmd) then
-        puts "failed".red
-        exit 1
+    def sys(cmd, soft=false)
+      marker = "! "
+      marker = "? " if $dry_run
+      puts "#{marker.yellow}#{cmd.yellow}"
+      unless $dry_run then
+        unless system(cmd) then
+          die "failed" unless soft
+        end
       end
     end
 
     def die(msg)
       puts msg.red
-      exit 2
+      exit ($?.exitstatus or 1)
     end
 
     def shellescape(str)
