@@ -1,23 +1,22 @@
-INJECT_TOTALFINDER_CMD = 'osascript -e "tell application \"Finder\" to «event BATFinit»"'
-CRASH_TOTALFINDER_CMD = 'osascript -e "tell application \"Finder\" to «event BAHCcrsh»"'
-OPEN_TOTALFINDER_CMD = 'open ~/Applications/TotalFinder.app'
-QUIT_TOTALFINDER_CMD = 'osascript -e "tell app \"TotalFinder\" to quit"'
-ACTIVATE_FINDER_CMD = 'osascript -e "tell application \"Finder\" to activate"'
-QUIT_FINDER_CMD = 'osascript -e "tell application \"Finder\" to quit"'
-KILL_FINDER_CMD = 'killall Finder'
-LAUNCH_FINDER_CMD = 'open Finder'
-
-REMOVE_DEV_TOTALFINDER_OSAX_CMD = 'rm -rf ~/Library/ScriptingAdditions/TotalFinder.osax'
-REMOVE_DEV_TOTALFINDER_APP_CMD = 'rm -rf ~/Applications/TotalFinder.app'
-
-REMOVE_RETAIL_TOTALFINDER_OSAX_CMD = 'sudo rm -rf /Library/ScriptingAdditions/TotalFinder.osax'
-REMOVE_RETAIL_TOTALFINDER_APP_CMD = 'sudo rm -rf /Applications/TotalFinder.app'
-
 module Badev
   module TotalFinder
-
     extend Badev::Helpers
-    
+
+    INJECT_TOTALFINDER_CMD = 'osascript -e "tell application \"Finder\" to «event BATFinit»"'
+    CRASH_TOTALFINDER_CMD = 'osascript -e "tell application \"Finder\" to «event BAHCcrsh»"'
+    OPEN_TOTALFINDER_CMD = 'open ~/Applications/TotalFinder.app'
+    QUIT_TOTALFINDER_CMD = 'osascript -e "tell app \"TotalFinder\" to quit"'
+    ACTIVATE_FINDER_CMD = 'osascript -e "tell application \"Finder\" to activate"'
+    QUIT_FINDER_CMD = 'osascript -e "tell application \"Finder\" to quit"'
+    KILL_FINDER_CMD = 'killall Finder'
+    LAUNCH_FINDER_CMD = 'open Finder'
+
+    REMOVE_DEV_TOTALFINDER_OSAX_CMD = 'rm -rf ~/Library/ScriptingAdditions/TotalFinder.osax'
+    REMOVE_DEV_TOTALFINDER_APP_CMD = 'rm -rf ~/Applications/TotalFinder.app'
+
+    REMOVE_RETAIL_TOTALFINDER_OSAX_CMD = 'sudo rm -rf /Library/ScriptingAdditions/TotalFinder.osax'
+    REMOVE_RETAIL_TOTALFINDER_APP_CMD = 'sudo rm -rf /Applications/TotalFinder.app'
+
     def self.launch_finder(options)
       sys(ACTIVATE_FINDER_CMD)
     end

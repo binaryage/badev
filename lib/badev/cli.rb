@@ -1,5 +1,7 @@
 require 'commander/import'
 require 'colored'
+require 'fileutils'
+require 'pathname'
 
 require "badev"
 require "badev/utils/helpers"
@@ -10,6 +12,7 @@ require "badev/commands/pushtags"
 require "badev/commands/osax"
 require "badev/commands/totalfinder"
 require "badev/commands/totalterminal"
+require "badev/commands/beautification"
 
 class Badev::CLI
 
@@ -55,6 +58,19 @@ class Badev::CLI
         retag_prefix = File.read(retag_file).strip if File.exists?(retag_file)
         options.default :prefix => retag_prefix
         Badev::Retagging::retag(options)
+      end
+    end
+
+    command :beautify do |c|
+      c.description = 'beautifies source code in a directory tree'
+      c.syntax = 'badev beautify [--root some/dir]'
+      c.option '--root PATH', String, 'Specify root path'
+      c.option '--all', 'Cross submodule boundaries'
+      c.option '--filter STRING', String, 'Additional regexp filter, e.g. .cpp'
+      c.option '--uncrustify', 'Use uncrustify instead of clang-format'
+      c.action do |args, options|
+        options.default :root => Dir.pwd
+        Badev::Beautification::beautify(options)
       end
     end
     

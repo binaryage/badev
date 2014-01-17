@@ -1,6 +1,3 @@
-require 'fileutils'
-require 'pathname'
-
 module Badev
   module PushTags
 

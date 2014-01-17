@@ -1,6 +1,4 @@
 require 'xcodeproj'
-require 'fileutils'
-require 'pathname'
 
 module Badev
   module XCConfig

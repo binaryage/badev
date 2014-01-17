@@ -1,23 +1,22 @@
-INJECT_TOTALTERMINAL_CMD = 'osascript -e "tell application \"Terminal\" to «event BATTinit»"'
-CRASH_TOTALTERMINAL_CMD = 'osascript -e "tell application \"Terminal\" to «event BAHCcrsh»"'
-OPEN_TOTALTERMINAL_CMD = 'open ~/Applications/TotalTerminal.app'
-QUIT_TOTALTERMINAL_CMD = 'osascript -e "tell app \"TotalTerminal\" to quit"'
-ACTIVATE_TERMINAL_CMD = 'osascript -e "tell application \"Terminal\" to activate"'
-QUIT_TERMINAL_CMD = 'osascript -e "tell application \"Terminal\" to quit"'
-KILL_TERMINAL_CMD = 'killall Terminal'
-LAUNCH_TERMINAL_CMD = 'open Terminal'
-
-REMOVE_DEV_TOTALTERMINAL_OSAX_CMD = 'rm -rf ~/Library/ScriptingAdditions/TotalTerminal.osax'
-REMOVE_DEV_TOTALTERMINAL_APP_CMD = 'rm -rf ~/Applications/TotalTerminal.app'
-
-REMOVE_RETAIL_TOTALTERMINAL_OSAX_CMD = 'sudo rm -rf /Library/ScriptingAdditions/TotalTerminal.osax'
-REMOVE_RETAIL_TOTALTERMINAL_APP_CMD = 'sudo rm -rf /Applications/TotalTerminal.app'
-
 module Badev
   module TotalTerminal
-
     extend Badev::Helpers
-    
+
+    INJECT_TOTALTERMINAL_CMD = 'osascript -e "tell application \"Terminal\" to «event BATTinit»"'
+    CRASH_TOTALTERMINAL_CMD = 'osascript -e "tell application \"Terminal\" to «event BAHCcrsh»"'
+    OPEN_TOTALTERMINAL_CMD = 'open ~/Applications/TotalTerminal.app'
+    QUIT_TOTALTERMINAL_CMD = 'osascript -e "tell app \"TotalTerminal\" to quit"'
+    ACTIVATE_TERMINAL_CMD = 'osascript -e "tell application \"Terminal\" to activate"'
+    QUIT_TERMINAL_CMD = 'osascript -e "tell application \"Terminal\" to quit"'
+    KILL_TERMINAL_CMD = 'killall Terminal'
+    LAUNCH_TERMINAL_CMD = 'open Terminal'
+
+    REMOVE_DEV_TOTALTERMINAL_OSAX_CMD = 'rm -rf ~/Library/ScriptingAdditions/TotalTerminal.osax'
+    REMOVE_DEV_TOTALTERMINAL_APP_CMD = 'rm -rf ~/Applications/TotalTerminal.app'
+
+    REMOVE_RETAIL_TOTALTERMINAL_OSAX_CMD = 'sudo rm -rf /Library/ScriptingAdditions/TotalTerminal.osax'
+    REMOVE_RETAIL_TOTALTERMINAL_APP_CMD = 'sudo rm -rf /Applications/TotalTerminal.app'
+        
     def self.launch_terminal(options)
       sys(ACTIVATE_TERMINAL_CMD)
     end
