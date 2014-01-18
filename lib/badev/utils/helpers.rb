@@ -1,3 +1,5 @@
+require 'open3'
+
 module Badev
   module Helpers
 
@@ -11,23 +13,43 @@ module Badev
     end
     
     def puts(x)
-      Kernel.puts $indent+x
+      Kernel.puts $indent+x.to_s
     end
 
-    def sys(cmd, soft=false)
+    def print_indented(text)
+      text.to_s.each_line do |line|
+        puts line
+      end
+    end
+    
+    def sys(cmd, soft=false, silenced=false)
       marker = "! "
       marker = "? " if $dry_run
       puts "#{marker.yellow}#{cmd.yellow}"
+
+      output = ""
       unless $dry_run then
-        unless system(cmd) then
-          die "failed" unless soft
+        status = nil
+        output = Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr| 
+          status = wait_thr.value
+          stdout.read
+        end
+        
+        indent do 
+          print_indented(output) unless silenced
+        end
+        
+        if status.exitstatus > 0 then
+          die("failed", status.exitstatus) unless soft
         end
       end
+      
+      output
     end
 
-    def die(msg)
+    def die(msg, exitstatus=1)
       puts msg.red
-      exit ($?.exitstatus or 1)
+      exit exitstatus
     end
 
     def shellescape(str)
@@ -47,5 +69,19 @@ module Badev
 
       return str
     end
+    
+    def release_version_from_filename(n, ext=".txt")
+      # n == /Users/darwin/code/totalfinder/payloads/TotalFinder-0.7.1.txt
+      p = File.basename(n, ext).split("-")[1]
+      n = p.split(".")
+      while n.size < 3 do
+        n << "0"
+      end
+      x = (n[0]||"0").to_i
+      y = (n[1]||"0").to_i
+      z = (n[2]||"0").to_i
+      x*1000000 + y*1000 + z
+    end
+        
   end
 end

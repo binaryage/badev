@@ -13,6 +13,7 @@ require "badev/commands/osax"
 require "badev/commands/totalfinder"
 require "badev/commands/totalterminal"
 require "badev/commands/beautification"
+require "badev/commands/payloads"
 
 class Badev::CLI
 
@@ -21,9 +22,39 @@ class Badev::CLI
     program :name, 'badev'
     program :version, Badev::VERSION
     program :description, 'A helper tool for development in BinaryAge'
+    program :help_formatter, :compact
     
     global_option('-d', '--dry-run', 'Show what would happen') { $dry_run = true }
 
+    command :payload do |c|
+      c.description = 'generates missing payloads'
+      c.syntax = 'badev payload [--root some/dir --releases some/dir --payloads some/dir]'
+      c.option '--root PATH', String, 'Specify root path'
+      c.option '--releases PATH', String, 'Specify a path for releases dir (relative to root)'
+      c.option '--payloads PATH', String, 'Specify a path for payloads dir (relative to root)'
+      c.option '--force', 'Force regeneration'
+      c.action do |args, options|
+        options.default :root => Dir.pwd
+        options.default :releases => "release"
+        options.default :payloads => "payloads"
+        Badev::Payloads::generate_payloads(options)
+      end
+    end
+
+    command :paydiff do |c|
+      c.description = 'diff latest payload'
+      c.syntax = 'badev paydiff [--root some/dir --payloads some/dir]'
+      c.option '--root PATH', String, 'Specify root path'
+      c.option '--payloads PATH', String, 'Specify a path for payloads dir (relative to root)'
+      c.option '--differ PATH', String, 'Specify a diff program to use'
+      c.action do |args, options|
+        options.default :root => Dir.pwd
+        options.default :differ => "ksdiff"
+        options.default :payloads => "payloads"
+        Badev::Payloads::payload_diff(options)
+      end
+    end
+    
     command :init_xcconfigs do |c|
       c.description = 'creates default xcconfig files for all .xcodeprojs in a directory tree'
       c.syntax = 'badev init_xcconfigs [--root some/dir]'
