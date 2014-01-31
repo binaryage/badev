@@ -69,6 +69,14 @@ module Badev
 
       return str
     end
+
+    def revision
+      `git rev-parse HEAD`.strip
+    end
+    
+    def short_revision
+      revision[0...7]
+    end
     
     def release_version_from_filename(n, ext=".txt")
       # n == /Users/darwin/code/totalfinder/payloads/TotalFinder-0.7.1.txt
@@ -81,6 +89,13 @@ module Badev
       y = (n[1]||"0").to_i
       z = (n[2]||"0").to_i
       x*1000000 + y*1000 + z
+    end
+    
+    def read_dwarfs_base_dir
+      return File.expand_path(File.read("shared/.dwarfs").strip) if File.exists? "shared/.dwarfs" # hack for TotalFinder
+      
+      die(".dwarfs file is not present in #{Dir.pwd.blue}") unless File.exists? ".dwarfs"
+      File.expand_path(File.read(".dwarfs").strip)
     end
         
   end

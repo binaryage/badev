@@ -14,6 +14,7 @@ require "badev/commands/totalfinder"
 require "badev/commands/totalterminal"
 require "badev/commands/beautification"
 require "badev/commands/payloads"
+require "badev/commands/archiving"
 
 class Badev::CLI
 
@@ -26,9 +27,26 @@ class Badev::CLI
     
     global_option('-d', '--dry-run', 'Show what would happen') { $dry_run = true }
 
+    command :archive do |c|
+      c.description = 'generates next archive'
+      c.syntax = 'badev archive [--root some/dir] [--archive some/dir] [--releases some/dir]'
+      c.option '--root PATH', String, 'Specify root path'
+      c.option '--archive PATH', String, 'Specify a path for archive'
+      c.option '--releases PATH', String, 'Specify a path for releases dir (relative to root)'
+      c.option '--payloads PATH', String, 'Specify a path for payloads dir (relative to root)'
+      c.option '--no-dwarfs', 'Do not include DWARFs'
+      c.action do |args, options|
+        options.default :root => Dir.pwd
+        options.default :archive => File.expand_path(File.join(options.root, "..", File.basename(options.root)+"-archive"))
+        options.default :releases => "release"
+        options.default :payloads => "payloads"
+        Badev::Archiving::archive(options)
+      end
+    end
+
     command :payload do |c|
       c.description = 'generates missing payloads'
-      c.syntax = 'badev payload [--root some/dir --releases some/dir --payloads some/dir]'
+      c.syntax = 'badev payload [--root some/dir] [--releases some/dir] [--payloads some/dir]'
       c.option '--root PATH', String, 'Specify root path'
       c.option '--releases PATH', String, 'Specify a path for releases dir (relative to root)'
       c.option '--payloads PATH', String, 'Specify a path for payloads dir (relative to root)'
@@ -43,7 +61,7 @@ class Badev::CLI
 
     command :paydiff do |c|
       c.description = 'diff latest payload'
-      c.syntax = 'badev paydiff [--root some/dir --payloads some/dir]'
+      c.syntax = 'badev paydiff [--root some/dir] [--payloads some/dir]'
       c.option '--root PATH', String, 'Specify root path'
       c.option '--payloads PATH', String, 'Specify a path for payloads dir (relative to root)'
       c.option '--differ PATH', String, 'Specify a diff program to use'
