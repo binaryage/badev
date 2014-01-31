@@ -15,6 +15,7 @@ A general command-line tool to aid project development in BinaryAge.
     A helper tool for development in BinaryAge
   
     Commands:
+      archive              generates next archive
       authorize_send       get rid of those annoying authorization dialogs during development
       beautify             beautifies source code in a directory tree
       crash_totalfinder    externally crash TotalFinder
