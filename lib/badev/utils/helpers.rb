@@ -54,6 +54,8 @@ module Badev
 
     def shellescape(str)
       # An empty argument will be skipped, so return empty quotes.
+      return "''" if str.nil?
+      str = str.to_s if not str.is_a?(String) && str.respond_to?("to_s", true)
       return "''" if str.empty?
 
       str = str.dup
