@@ -58,9 +58,9 @@ module Badev
       XEND
     
       lines = header.split("\n")
-    
-      lines << "#import \"#{original_pch.relative_path_from(pch.dirname)}\"" unless original_pch.nil?
+
       lines << "#import <ClassPrefix/PrefixedClassAliases.h>"
+      lines << "#import \"#{original_pch.relative_path_from(pch.dirname)}\"" unless original_pch.nil?
     
       lines.join("\n")
     end
