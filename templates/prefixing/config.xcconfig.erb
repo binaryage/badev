@@ -1,0 +1,10 @@
+// prefixing logic
+<%
+
+def skip_prefixing_config?
+  @precompiled_header.nil? || @baproj.nil? || @project_dir.nil?
+end
+
+%>
+
+<%= include("base") unless skip_prefixing_config? %>

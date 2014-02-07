@@ -1,0 +1,15 @@
+///
+/// Universal configuration for all projects using class-prefixing
+///
+
+<%
+include_path = "#{@baproj.relative_include_dir(@project_dir)}"
+srcroot = "$(SRCROOT)/" + include_path
+projdir = "$(PROJEC_DIR)" + include_path
+
+$shared["HEADER_SEARCH_PATHS"] << srcroot unless $shared["HEADER_SEARCH_PATHS"].include?(srcroot) && $shared["HEADER_SEARCH_PATHS"].include?(projdir)
+%>
+
+GCC_PRECOMPILE_PREFIX_HEADER = YES
+GCC_PREFIX_HEADER = <%= @precompiled_header %>
+GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES

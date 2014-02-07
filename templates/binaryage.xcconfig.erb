@@ -15,5 +15,8 @@
 <%= include("partials/totalfinder/config") %>
 <%= include("partials/totalterminal/config") %>
 
+// add prefixing related values -- needs to be at the end in order to override/modify any existing settings
+<%= include("prefixing/config") %> 
+
 // this file must go last to generate shared values
 <%= include("partials/shared_end") %>

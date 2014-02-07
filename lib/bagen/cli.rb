@@ -14,9 +14,16 @@ class Bagen::CLI
 
     command :generate do |c|
       c.description = 'generates xcconfig file according to given parameters'
-      c.syntax = 'bagen generate [arg1] [arg2] ... [argN]'
+      c.syntax = 'bagen generate [--root PATH] [--project_dir PATH] [--pch FILE] [--output PATH] [arg1] [arg2] ... [argN]'
+      c.option '--root PATH', String, 'Specify root path'
+      c.option '--output PATH', String, 'Specify PATH to write xcconfig'
+      c.option '--project_dir PATH', String, 'Specify PATH of project'
+      c.option '--pch FILE', String, 'Specify path to a prefix header'
       c.action do |args, options|
-        Bagen::Generator::generate(args)
+        options.default :root => Dir.pwd
+        options.default :project_dir => Dir.pwd
+        options.default :pch => ""
+        Bagen::Generator::generate(args, options)
       end
     end
   end

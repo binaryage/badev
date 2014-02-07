@@ -5,6 +5,29 @@ module Badev
 
     extend Badev::Helpers
 
+    XCPROJECT = File.join(TOOLS_DIR, "xcproject")
+
+    def self.prefix_header_path(target, conf="Debug")
+      return nil if target.nil?
+      original_pch = `#{XCPROJECT} print-settings -e -p #{shellescape(target.project.path)} -t #{shellescape(target.name)} -c #{shellescape(conf)} GCC_PREFIX_HEADER`.strip
+      Pathname.new(original_pch)
+    end
+
+    def self.generated_prefix_header_path(target, conf="Debug")
+      return nil if target.nil?
+      # get the originally specified precompiled header
+      original = prefix_header_path(target, conf)
+
+      # sanity check
+      return nil if original.nil? or original.to_s.empty?
+
+      # bail if original value is our generated pch
+      return original if original.to_s =~ /_generated.pch$/
+
+      # generated value based on original pch
+      original.dirname + "#{original.basename(original.extname)}_generated.pch"
+    end
+
     def self.collect_xcodeprojs(dirs)
       xcodeprojs = []
 
@@ -19,20 +42,6 @@ module Badev
       xcodeprojs
     end
 
-    def self.collect_xcconfigs(dirs)
-      xcconfigs = []
-
-      dirs.each do |base|
-        if File.exists? base then
-          Dir.glob(File.join(base, "**/*.xcconfig")) do |dir|
-            xcconfigs << File.expand_path(dir)
-          end
-        end
-      end
-
-      xcconfigs
-    end
-
     def self.make_xcconfig_line(key, value)
       v = value
       if value.kind_of?(Array) then
@@ -44,7 +53,7 @@ module Badev
 
     def self.build_default_xcconfig(destname, project, configuration, target, settings_list)
       template = <<-XEND.gsub(/^ {6}/, '')
-      //!bagen generate binaryage #{shellescape(project)} #{shellescape(configuration)} #{shellescape(target)} > #{shellescape(destname)}
+      //!bagen generate binaryage #{shellescape(project)} #{shellescape(configuration)} #{shellescape(target)}
       //
       // this file should be set as #{configuration} configuration for target #{target} in #{project}.xcodeproj
 
@@ -63,6 +72,13 @@ module Badev
       end
 
       template + export
+    end
+
+    def self.generated_xcconfig_path(xcconfig)
+      return "" if xcconfig.nil?
+      xcconfig = Pathname.new(xcconfig)
+      return xcconfig if xcconfig.to_s =~ /_generated\.xcconfig$/
+      xcconfig.dirname.join("#{xcconfig.basename(xcconfig.extname)}_generated.xcconfig").to_s
     end
 
     def self.init_configs_for_proj(proj, dest)
@@ -90,7 +106,20 @@ module Badev
       end
     end
 
+    def self.convert_generator(path)
+      lines = File.read(path).split("\n")
+      return unless lines[0] =~ /\/\/!/
+      i = lines[0].rindex('>')
+      return unless i
+      lines[0] = lines[0].slice(0,i).rstrip
+      content = lines.join("\n")
+      File.open(path, "w") { |file| file.write(content) }
+    end
+
     def self.parse_xcconfig_header(path)
+      # convert previous generator that redirected stdout
+      #   the new generator has an option for specifing output file separatly from the args passed to it
+      convert_generator(path)
       lines = File.read(path).split("\n")
       return unless lines[0] =~ /\/\/!(.*)/
       generator = $1.strip
@@ -108,17 +137,26 @@ module Badev
     end
 
     def self.regen_configs_in_tree(root_path)
-      xcconfigs = collect_xcconfigs([root_path])
       lastdir = nil
-      xcconfigs.each do |xcconfig|
-        generator = parse_xcconfig_header(xcconfig)
-        next unless generator
 
-        dir = File.dirname(xcconfig)
-        Dir.chdir dir do
-          puts "in #{dir.blue}:" if lastdir!=dir
-          lastdir = dir
-          sys(generator)
+      xcodeprojs = collect_xcodeprojs([root_path])
+      xcodeprojs.each do |xcodeproj|
+        proj = Xcodeproj::Project.open(xcodeproj)
+        proj.targets.each do |target|
+          target.build_configurations.each do |conf|
+            next unless conf.base_configuration_reference
+            xcconfig = conf.base_configuration_reference.real_path
+
+            generator = parse_xcconfig_header(xcconfig.to_s)
+            next unless generator
+
+            dir = xcconfig.dirname.to_s
+            puts "in #{dir.blue}:" if lastdir!=dir
+            lastdir = dir
+            generator << " --root #{shellescape(root_path)} --project_dir #{shellescape(proj.path.dirname.to_s)}"
+            generator << " --output #{shellescape(generated_xcconfig_path(xcconfig))} --pch #{shellescape(generated_prefix_header_path(target, conf.name))}"
+            sys(generator)
+          end
         end
       end
     end
