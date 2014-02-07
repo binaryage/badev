@@ -23,9 +23,16 @@ module Baproj
             end
           end
 
-          proj = Baproj::Project.open(options.path)
+          proj = Baproj::Project.new(options.path)
           proj.name = options.name
           proj.prefix = options.prefix
+          
+          args.each do |arg|
+            comps = arg.split("=").compact
+            next arg unless comps.count = 2
+            proj[comps[0]] = comps[1]
+          end
+          
           proj.save
         end
       end

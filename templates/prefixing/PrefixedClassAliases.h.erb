@@ -4,14 +4,9 @@
 
 #import "BaClassPrefix.h"
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wmissing-declarations"
-
 <%=
-  decls = @classes.dup
+  decls = @classes.dup.reverse
   decls.reject! { |klass| klass =~ /BA_PREFIXED_CLASS_ALIAS/ }
-  decls.map! { |klass| "BA_PREFIXED_CLASS_ALIAS(#{klass});" }
+  decls.map! { |klass| "BA_PREFIXED_CLASS_SUPPORT(#{klass});" }
   decls.join("\n")
 %>
-
-#pragma clang diagnostic pop

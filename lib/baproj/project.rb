@@ -14,9 +14,10 @@ module Baproj
 
     # Currently well supported settings names
     #
-    #  @name
-    #  @prefix
-    #  @tag_prefix
+    # => name
+    # => prefix
+    # => tag_prefix
+    # => prefix_excluded_files
 
     def initialize(_path=".baproj", attrs={})
       @path = Pathname.new(_path).expand_path
@@ -35,6 +36,30 @@ module Baproj
       new(_path)
     end
 
+    def expanded_value(val)
+      return nil if val.nil?
+      val.gsub!(/\$\(BA_PROJECT_DIR\)/, "#{@path.dirname}")
+    # some other pre-defined keys
+      # substitute project defined settings
+      val
+    end
+
+    def split_value(val)
+      return "" if val.nil?
+      values = []
+      if val =~ /".*?"/
+        val.gsub!(/"([^"]*)"/) do |m|
+          values << expanded_value("#{$1}")
+          ""
+        end
+      end
+      remaining = val.split(" ").map! { |item| expanded_value(item) }
+      values.concat(remaining)
+      values.compact.sort.uniq
+      return values[0] if values.count == 1
+      values
+    end
+
     def initialize_from_file
       return unless @path.readable?
       contents = @path.read
@@ -44,7 +69,8 @@ module Baproj
           value = m[2]
           next m if key.nil? or key.empty?
           next m if value.nil? or value.empty?
-          @ba_attributes[key] = value
+          #@ba_attributes[key] = split_value(value)
+          @ba_attributes[key] = expanded_value(value)
         end
       end
     end
@@ -100,15 +126,17 @@ module Baproj
       include_dir.relative_path_from(Pathname.new(from_path))
     end
 
-    def [](key);                        @ba_attributes[key];                                  end;
-    def name;                           @ba_attributes["BA_PROJECT_NAME"];                    end;
-    def prefix;                         @ba_attributes["BA_CLASS_PREFIX"];                    end;
-    def tag_prefix;                     @ba_attributes["BA_TAG_PREFIX"];                      end;
+    def [](key);                              @ba_attributes[key];                                        end;
+    def name;                                 @ba_attributes["BA_PROJECT_NAME"];                          end;
+    def prefix;                               @ba_attributes["BA_CLASS_PREFIX"];                          end;
+    def tag_prefix;                           @ba_attributes["BA_TAG_PREFIX"];                            end;
+    def prefix_excluded_files;                @ba_attributes["BA_CLASS_PREFIX_EXCLUDE"];                  end;
 
-    def []=(key, value);                @ba_attributes[key] = value;                          end;
-    def name=(value);                   @ba_attributes["BA_PROJECT_NAME"] = value;            end;
-    def prefix=(value);                 @ba_attributes["BA_CLASS_PREFIX"] = value;            end;
-    def tag_prefix=(value);             @ba_attributes["BA_TAG_PREFIX"] = value;              end;
+    def []=(key, value);                      @ba_attributes[key] = value;                                end;
+    def name=(value);                         @ba_attributes["BA_PROJECT_NAME"] = value;                  end;
+    def prefix=(value);                       @ba_attributes["BA_CLASS_PREFIX"] = value;                  end;
+    def tag_prefix=(value);                   @ba_attributes["BA_TAG_PREFIX"] = value;                    end;
+    def prefix_excluded_files=(value);        @ba_attributes["BA_CLASS_PREFIX_EXCLUDE"] = value;          end;
 
   end
 end

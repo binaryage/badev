@@ -5,9 +5,8 @@
 <%
 include_path = "#{@baproj.relative_include_dir(@project_dir)}"
 srcroot = "$(SRCROOT)/" + include_path
-projdir = "$(PROJEC_DIR)" + include_path
 
-$shared["HEADER_SEARCH_PATHS"] << srcroot unless $shared["HEADER_SEARCH_PATHS"].include?(srcroot) && $shared["HEADER_SEARCH_PATHS"].include?(projdir)
+$shared["HEADER_SEARCH_PATHS"] << srcroot unless $shared["HEADER_SEARCH_PATHS"].include? srcroot
 %>
 
 GCC_PRECOMPILE_PREFIX_HEADER = YES

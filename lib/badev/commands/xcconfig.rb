@@ -7,16 +7,23 @@ module Badev
 
     XCPROJECT = File.join(TOOLS_DIR, "xcproject")
 
-    def self.prefix_header_path(target, conf="Debug")
-      return nil if target.nil?
+    def self.prefix_header_path(target, root_dir, conf="Debug")
+      return nil if target.nil? or root_dir.nil?
       original_pch = `#{XCPROJECT} print-settings -e -p #{shellescape(target.project.path)} -t #{shellescape(target.name)} -c #{shellescape(conf)} GCC_PREFIX_HEADER`.strip
-      Pathname.new(original_pch)
+      original = Pathname.new(original_pch)
+      if original.absolute?
+        unless original_pch =~ /^#{root_dir}/
+          return nil
+        end
+      end
+
+      original
     end
 
-    def self.generated_prefix_header_path(target, conf="Debug")
+    def self.generated_prefix_header_path(target, root_dir, conf="Debug")
       return nil if target.nil?
       # get the originally specified precompiled header
-      original = prefix_header_path(target, conf)
+      original = prefix_header_path(target, root_dir, conf)
 
       # sanity check
       return nil if original.nil? or original.to_s.empty?
@@ -154,7 +161,7 @@ module Badev
             puts "in #{dir.blue}:" if lastdir!=dir
             lastdir = dir
             generator << " --root #{shellescape(root_path)} --project_dir #{shellescape(proj.path.dirname.to_s)}"
-            generator << " --output #{shellescape(generated_xcconfig_path(xcconfig))} --pch #{shellescape(generated_prefix_header_path(target, conf.name))}"
+            generator << " --output #{shellescape(generated_xcconfig_path(xcconfig))} --pch #{shellescape(generated_prefix_header_path(target, root_path, conf.name))}"
             sys(generator)
           end
         end

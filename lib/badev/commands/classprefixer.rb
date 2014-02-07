@@ -98,18 +98,23 @@ module Badev
       classes.compact.sort.uniq.reverse
     end
     
-    def self.collect_target_files(_dir)
+    def self.collect_target_files(root_dir)
       files = []
-      dirs = Array(_dir)
-      dirs.each do |dir|
-        next dir unless File.directory?(dir)
-        Dir.chdir(dir) do
-          Dir.glob("**/*") do |file|
-            next if file =~ /(BaClassPrefix|PrefixedClassAliases)\.h/
-            next unless file =~ /(\.(pch|h|mm|m|hpp|xib|sdef)|.*Info.plist)$/
-            full = File.join(dir, file)
-            files << full
+      return files unless File.exists? root_dir
+      Dir.chdir(root_dir) do
+        baproj = Baproj::Project.open(root_dir)
+        Dir.glob("**/*") do |f|
+          file = File.expand_path(f)
+          next if file =~ /(BaClassPrefix|PrefixedClassAliases)\.h/
+          next unless file =~ /(\.(pch|h|mm|m|hpp|xib|sdef)|.*Info.plist)$/
+          excluded_files = baproj.prefix_excluded_files
+          if excluded_files.is_a? Array
+            next if excluded_files.include? file
+          elsif excluded_files.is_a? String
+            next if excluded_files == file
           end
+          
+          files << file
         end
       end
       files
@@ -217,17 +222,16 @@ module Badev
         modified = false
         
         if all_class_tokens
-          original.gsub!(/(@class\s+.*)((?<!BA_PREFIXED_CLASS\()#{regexp})(.*;)/) do |m|
+          # Note: This doesn't handle class lists... the regex got too complex
+          original.gsub!(/(@class\s+)(#{regexp})/) do |m|
             modified = true
-            "#{m}".gsub(/[\s,](#{regexp})[\s,;]/) do |n|
-              "BA_PREFIXED_CLASS(#{$1})"
-            end
+            "#{$1}BA_PREFIXED_CLASS(#{$2})"
           end
           
           modified = handle_arbitrary_cases(original, modified, regexp, classes, baproj)
           
         else
-          original.gsub!(/(@interface\s+)(#{regexp})(\s+:)/) do |m|
+          original.gsub!(/(@interface\s+)(#{regexp})((?!\()\s*)/) do |m|
             modified = true
             "#{$1}BA_PREFIXED_CLASS(#{$2})#{$3}"
           end
@@ -256,30 +260,31 @@ module Badev
       fix_class_names(files, Baproj::Project.open(root_dir))
     end
     
-    def self.init_pch_for_proj(proj, force=false)
+    def self.init_pch_for_proj(proj, root_dir, force=false)
       proj_dir = proj.path.dirname
       finished_targets = []
       
       # Generate precompiled header for each target
       proj.targets.each do |target|
         target.build_configurations.each do |conf|
-          original = proj_dir + Badev::XCConfig.prefix_header_path(target, conf.name)
-          generated = Badev::XCConfig.generated_prefix_header_path(target, conf.name)
-          next if generated.nil? or generated.to_s.empty?
+          original_pch = Badev::XCConfig.prefix_header_path(target, root_dir, conf.name)
+          next conf if original_pch.nil?
+          original = proj_dir + original_pch
+          generated = Badev::XCConfig.generated_prefix_header_path(target, root_dir, conf.name)
+          next conf if generated.nil? or generated.to_s.empty?
         
           pch_file = proj_dir + generated
         
           if pch_file.exist?
             unless force
-              puts "#{pch_file.to_s.blue} already exists => skipping"
-              next
+              puts "#{pch_file.to_s.blue} already exists => skipping" unless finished_targets.include? target.name
+              next conf
             end
-            next if finished_targets.inlude? target.name
           end
         
           unless pch_file.dirname.exist?
             puts "Failed to generate prefix header (#{pch_file.basename}) => #{pch_file.dirname} doesn't exist".red
-            next
+            next conf
           end
         
           content = generate_pch(pch_file, original)
@@ -305,15 +310,15 @@ module Badev
     end
     
     def self.init_headers(args, options)
-      xcodeprojs = Badev::XCConfig.collect_xcodeprojs(options.root)
+      xcodeprojs = Badev::XCConfig.collect_xcodeprojs([options.root])
       xcodeprojs.each do |xcodeproj|
         proj = Xcodeproj::Project.open(xcodeproj)
-        init_pch_for_proj(proj)
+        init_pch_for_proj(proj, options.root)
       end
       
       init_class_prefix_headers(args, options)
       
-      puts "Run `badev regen_xcconfigs` to generate xcconfigs with a proper GCC_PREFIX_HEADER build settings value" if classes.empty?
+      puts "Run `badev regen_xcconfigs` to generate xcconfigs with a proper GCC_PREFIX_HEADER build settings value"
     end
     
     def self.regen_class_prefix_headers(args, options)
