@@ -6,7 +6,7 @@
 
 <%=
   decls = @classes.dup.reverse
-  decls.reject! { |klass| klass =~ /BA_PREFIXED_CLASS_ALIAS/ }
+  decls.reject! { |klass| klass =~ /BA_PREFIXED_CLASS/ }
   decls.map! { |klass| "BA_PREFIXED_CLASS_SUPPORT(#{klass});" }
   decls.join("\n")
 %>
