@@ -96,6 +96,7 @@ module Badev
         configuration_settings = conf.build_settings
 
         proj.targets.each do |target|
+          next unless target.product_reference # this skips external and aggregate targets
           target_settings = target.build_settings(conf.name)
 
           # TODO: here we should sanitize filenames for bad characters
