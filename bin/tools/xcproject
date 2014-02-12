@@ -36,9 +36,8 @@ end
 def find_rpaths
   paths = []
   load_commands = `otool -l \"#{XCPROJECT_PATH}\"`
-  load_commands.gsub(/cmd LC_RPATH\n.+?\n\s+path\s+([^ ]+) \(.+?\)/) do |m|
-    paths << $1
-    "#{m}"
+  load_commands.scan(/cmd LC_RPATH\n.+?\n\s+path\s+([^ ]+) \(.+?\)/) do |path|
+    paths << path
   end
   paths
 end
