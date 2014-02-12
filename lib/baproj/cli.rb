@@ -28,8 +28,8 @@ module Baproj
           proj.prefix = options.prefix
           
           args.each do |arg|
-            comps = arg.split("=").compact
-            next arg unless comps.count = 2
+            comps = arg.split("=").compact.map! { |item| item.strip }
+            next arg unless comps.count == 2
             proj[comps[0]] = comps[1]
           end
           
