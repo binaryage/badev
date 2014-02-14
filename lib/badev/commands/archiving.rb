@@ -101,6 +101,13 @@ module Badev
         sys("cp \"#{payload}\" payload.txt")
       end
     end
+
+    def self.push_archive(options)
+      puts "pushing archive in #{options.archive.blue}"
+      Dir.chdir(options.archive) do
+        sys("git push --tags")
+      end
+    end
     
     def self.archive(options)
       puts "generating archive in #{options.root.blue}"

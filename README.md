@@ -22,6 +22,7 @@ A general command-line tool to aid project development in BinaryAge.
       crash_totalterminal  externally crash TotalTerminal
       deauthorize_send     re-enable authorization dialogs
       help                 Display global or [command] help documentation.
+      init_headers         creates BaClassPrefix.h/PrefixedClassAliases.h and a generates precompiled headers for all .xcodeprojs in a directory tree
       init_xcconfigs       creates default xcconfig files for all .xcodeprojs in a directory tree
       inject_totalfinder   attempt to inject TotalFinder
       inject_totalterminal attempt to inject TotalTerminal
@@ -33,11 +34,14 @@ A general command-line tool to aid project development in BinaryAge.
       open_totalterminal   open ~/Applications/TotalTerminal.app
       paydiff              diff latest payload
       payload              generates missing payloads
+      prefix_classes       wraps all compilable ObjC classes with prefixing macro and adds -include /path/to/some/dir/PrefixedClassSupport.h to OTHER_C(PLUSPLUS)FLAGS build settings
+      push_archive         pushes archive repo
       push_tags            pushes tags from all submodules
       quit_finder          quit Finder deliberately via AppleScript
       quit_terminal        quit Terminal deliberately via AppleScript
       quit_totalfinder     quit Finder+TotalFinder deliberately via AppleScript
       quit_totalterminal   quit Terminal+TotalTerminal deliberately via AppleScript
+      regen_headers        regenerates PrefixedClassAliases.h
       regen_xcconfigs      regenerates xcconfig files for all .xcodeprojs in a directory tree
       restart_finder       restart Finder deliberately via AppleScript
       restart_terminal     restart Terminal deliberately via AppleScript

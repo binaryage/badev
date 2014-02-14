@@ -45,6 +45,18 @@ class Badev::CLI
       end
     end
 
+    command :push_archive do |c|
+      c.description = 'pushes archive repo'
+      c.syntax = 'badev archive [--root some/dir] [--archive some/dir]'
+      c.option '--root PATH', String, 'Specify root path'
+      c.option '--archive PATH', String, 'Specify a path for archive'
+      c.action do |args, options|
+        options.default :root => Dir.pwd
+        options.default :archive => File.expand_path(File.join(options.root, "..", File.basename(options.root)+"-archive"))
+        Badev::Archiving::push_archive(options)
+      end
+    end
+
     command :payload do |c|
       c.description = 'generates missing payloads'
       c.syntax = 'badev payload [--root some/dir] [--releases some/dir] [--payloads some/dir]'
