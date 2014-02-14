@@ -18,10 +18,17 @@ module Baproj
     # => prefix
     # => tag_prefix
     # => prefix_excluded_files
+    DEFAULT_ATTRIBUTES = {
+      :BA_PROJECT_NAME => File.dirname(Dir.pwd)
+      :BA_CLASS_PREFIX => ""
+      :BA_TAG_PREFIX => ""
+      :BA_CLASS_PREFIX_EXCLUDE => []
+    }
 
     def initialize(_path=".baproj", attrs={})
       @path = Pathname.new(_path).expand_path
-      @ba_attributes = attrs
+      @ba_attributes = DEFAULT_ATTRIBUTES.dup
+      set_default_attributes(attrs)
       initialize_from_file
     end
 
@@ -58,6 +65,10 @@ module Baproj
       values.compact.sort.uniq
       return values[0] if values.count == 1
       values
+    end
+    
+    def set_default_attributes(attrs)
+      @ba_attributes.merge!(attrs.to_hash) if attrs.respond_to?(:to_hash)
     end
 
     def initialize_from_file
@@ -130,7 +141,11 @@ module Baproj
     def name;                                 @ba_attributes["BA_PROJECT_NAME"];                          end;
     def prefix;                               @ba_attributes["BA_CLASS_PREFIX"];                          end;
     def tag_prefix;                           @ba_attributes["BA_TAG_PREFIX"];                            end;
-    def prefix_excluded_files;                @ba_attributes["BA_CLASS_PREFIX_EXCLUDE"];                  end;
+    def prefix_excluded_files
+      files = @ba_attributes["BA_CLASS_PREFIX_EXCLUDE"]
+      return [] unless files
+      files
+    end
 
     def []=(key, value);                      @ba_attributes[key] = value;                                end;
     def name=(value);                         @ba_attributes["BA_PROJECT_NAME"] = value;                  end;
