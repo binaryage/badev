@@ -86,7 +86,7 @@ module Badev
             classes << cls
           end
         else
-          original.scan(/^([^\/].*)?(@implementation\s+)((?<!BA_PREFIXED_CLASS\()\w+)(\s+(?!\())/) do |pre,imp,cls,post|
+          original.scan(/^(\s*[^\/].*)?(@implementation\s+)((?<!BA_PREFIXED_CLASS\()\w+)(\s+(?!\())/) do |pre,imp,cls,post|
             classes << cls
           end
         end
@@ -98,19 +98,24 @@ module Badev
       classes.compact.sort.uniq.reverse
     end
     
-    def self.collect_target_files(root_dir)
+    def self.collect_target_files(baproj, all_classes=true)
       files = []
-      return files unless File.exists? root_dir
+      die("required directory does not exists at #{baproj.path.dirname.to_s.yellow}") unless baproj.path.dirname.exist?
+      root_dir = baproj.path.dirname
       Dir.chdir(root_dir) do
-        baproj = Baproj::Project.open(root_dir)
         Dir.glob("**/*") do |f|
           file = File.expand_path(f)
-          next if file =~ /(BaClassPrefix|PrefixedClassAliases)\.h/
-          next unless file =~ /(\.(pch|h|mm|m|hpp|xib|sdef)|.*Info.plist)$/
-          excluded_files = baproj.prefix_excluded_files
-          if excluded_files.is_a? Array
+          next if file =~ /(BaClassPrefix|PrefixedClassAliases)\.h$/
+          if all_classes
+            next unless file =~ /(\.(pch|h|mm|m|hpp|xib|sdef)|.*Info.plist)$/
+          else
+            next unless file =~ /\.(pch|h|mm|m)$/
+          end
+          
+          excluded_files = baproj.prefix_excluded_files.map { |ex| File.expand_path ex }
+          if excluded_files.respond_to?(:include?)
             next if excluded_files.include? file
-          elsif excluded_files.is_a? String
+          else
             next if excluded_files == file
           end
           
@@ -214,14 +219,14 @@ module Badev
       return modified
     end
     
-    def self.fix_classes_in_files(files, classes, all_class_tokens, baproj)
+    def self.fix_classes_in_files(files, classes, all_classes, baproj)
       regexp = build_regexp_from_classes(classes).to_s
   
       files.each do |file|
         original = File.read(file)
         modified = false
         
-        if all_class_tokens
+        if all_classes
           # Note: This doesn't handle class lists... the regex got too complex
           original.gsub!(/(@class\s+)(#{regexp})/) do |m|
             modified = true
@@ -248,16 +253,16 @@ module Badev
       end
     end
     
-    def self.fix_class_names(files, baproj)
-      classes = collect_classes(files, false)
-      fix_classes_in_files(files, classes, false, baproj) unless classes.empty?
-      classes = collect_classes(files, true)
-      fix_classes_in_files(files, classes, true, baproj) unless classes.empty?
+    def self.fix_class_names(baproj, all_classes)
+      files = collect_target_files(baproj, all_classes)
+      classes = collect_classes(files, all_classes)
+      fix_classes_in_files(files, classes, all_classes, baproj) unless classes.empty?
     end
     
     def self.prefix_classes(root_dir)
-      files = collect_target_files(root_dir)
-      fix_class_names(files, Baproj::Project.open(root_dir))
+      baproj = Baproj::Project.open(root_dir)
+      fix_class_names(baproj, false)
+      fix_class_names(baproj, true)
     end
     
     def self.init_pch_for_proj(proj, root_dir, force=false)
@@ -322,9 +327,11 @@ module Badev
     end
     
     def self.regen_class_prefix_headers(args, options)
+      baproj = Baproj::Project.open(options.root)
+      
       # fix any un-prefixed classes
       prefix_classes(options.root)
-      files = collect_target_files(options.root)
+      files = collect_target_files(baproj, true)
       classes = collect_classes(files, true)
       
       # generate new BaClassPrefix.h and PrefixedClassAliases.h
