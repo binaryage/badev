@@ -90,9 +90,12 @@ class Badev::CLI
       c.description = 'creates default xcconfig files for all .xcodeprojs in a directory tree'
       c.syntax = 'badev init_xcconfigs [--root some/dir]'
       c.option '--root PATH', String, 'Specify root path'
+      c.option '--add', 'Add xcconfigs to projects'
+      c.option '--group GROUP', String, 'Specify group path to add xcconfigs (ignored unless --add used)'
       c.action do |args, options|
         options.default :root => Dir.pwd
-        Badev::XCConfig::init_configs_in_tree(options.root)
+        options.default :group => "Configs"
+        Badev::XCConfig::init_configs_in_tree(args, options)
       end
     end
 
