@@ -19,10 +19,10 @@ module Baproj
     # => tag_prefix
     # => prefix_excluded_files
     DEFAULT_ATTRIBUTES = {
-      :BA_PROJECT_NAME => File.dirname(Dir.pwd)
-      :BA_CLASS_PREFIX => ""
-      :BA_TAG_PREFIX => ""
-      :BA_CLASS_PREFIX_EXCLUDE => []
+      :BA_PROJECT_NAME => File.dirname(Dir.pwd),
+      :BA_CLASS_PREFIX => "",
+      :BA_TAG_PREFIX => "",
+      :BA_CLASS_PREFIX_EXCLUDE => [],
     }
 
     def initialize(_path=".baproj", attrs={})
