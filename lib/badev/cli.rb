@@ -155,7 +155,7 @@ class Badev::CLI
       c.option '--root PATH', String, 'Specify root path'
       c.action do |args, options|
         options.default :root => Dir.pwd
-        Badev::ClassPrefixer::prefix_classes(options.root)
+        Badev::ClassPrefixer::prefix_classes(args, options)
       end
     end
 
@@ -166,16 +166,6 @@ class Badev::CLI
       c.action do |args, options|
         options.default :root => Dir.pwd
         Badev::ClassPrefixer::init_headers(args, options)
-      end
-    end
-
-    command :regen_headers do |c|
-      c.description = 'regenerates PrefixedClassAliases.h'
-      c.syntax = 'badev regen_class_prefix_headers [--root some/dir]'
-      c.option '--root PATH', String, 'Specify root path'
-      c.action do |args, options|
-        options.default :root => Dir.pwd
-        Badev::ClassPrefixer::regen_class_prefix_headers(args, options)
       end
     end
 

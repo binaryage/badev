@@ -75,6 +75,16 @@ module Badev
       Regexp.union(subexprs)
     end
     
+    def self.collect_class_aliases(prefixed_alias_header)
+      prefixed_classes = []
+      if File.exists?(prefixed_alias_header)
+        contents = File.read(prefixed_alias_header)
+        contents.scan(/^BA_PREFIXED_CLASS_SUPPORT\((.*?)\);$/) { |cls| prefixed_classes << cls }
+      end
+      prefixed_classes.compact.sort.uniq.reverse
+      end
+    end
+    
     def self.collect_classes(files, wrapped=false)
       classes = []
       
@@ -126,6 +136,12 @@ module Badev
     end
     
     def self.handle_arbitrary_cases(original, modified, regexp, classes, baproj)
+      
+      # Note: This doesn't handle class lists... the regex got too complex
+      original.gsub!(/(@class\s+)(#{regexp})/) do |m|
+        modified = true
+        "#{$1}BA_PREFIXED_CLASS(#{$2})"
+      end
 
       # # BaClassPrefix.h resolves this problem by defining NSClassFromString macro that calls a custom function
       # #
@@ -227,14 +243,7 @@ module Badev
         modified = false
         
         if all_classes
-          # Note: This doesn't handle class lists... the regex got too complex
-          original.gsub!(/(@class\s+)(#{regexp})/) do |m|
-            modified = true
-            "#{$1}BA_PREFIXED_CLASS(#{$2})"
-          end
-          
           modified = handle_arbitrary_cases(original, modified, regexp, classes, baproj)
-          
         else
           original.gsub!(/(@interface\s+)(#{regexp})((?!\()\s*)/) do |m|
             modified = true
@@ -257,12 +266,7 @@ module Badev
       files = collect_target_files(baproj, all_classes)
       classes = collect_classes(files, all_classes)
       fix_classes_in_files(files, classes, all_classes, baproj) unless classes.empty?
-    end
-    
-    def self.prefix_classes(root_dir)
-      baproj = Baproj::Project.open(root_dir)
-      fix_class_names(baproj, false)
-      fix_class_names(baproj, true)
+      classes
     end
     
     def self.init_pch_for_proj(proj, root_dir, force=false)
@@ -326,16 +330,21 @@ module Badev
       puts "Run `badev regen_xcconfigs` to generate xcconfigs with a proper GCC_PREFIX_HEADER build settings value"
     end
     
-    def self.regen_class_prefix_headers(args, options)
+    def self.prefix_classes(args, options)
       baproj = Baproj::Project.open(options.root)
+      prefixed_alias_header = baproj.include_dir + "ClassPrefix" + "PrefixedClassAliases.h"
       
-      # fix any un-prefixed classes
-      prefix_classes(options.root)
-      files = collect_target_files(baproj, true)
-      classes = collect_classes(files, true)
+      # we test this after fixing any class names to see if there were any modifications
+      prefixed_classes = collect_class_aliases(prefixed_alias_header)
       
-      # generate new BaClassPrefix.h and PrefixedClassAliases.h
-      init_class_prefix_headers(args, options, classes)
+      # false => fix any unwrapped @implementation/@interface
+      fix_class_names(baproj, false)
+      
+      # true => fix any instances where the actual class token is required
+      classes = fix_class_names(baproj, true)
+      
+      # If there were modifications, generate new BaClassPrefix.h and PrefixedClassAliases.h
+      init_class_prefix_headers(args, options, classes) unless prefixed_classes == classes
     end
     
   end

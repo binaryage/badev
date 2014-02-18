@@ -34,14 +34,13 @@ A general command-line tool to aid project development in BinaryAge.
       open_totalterminal   open ~/Applications/TotalTerminal.app
       paydiff              diff latest payload
       payload              generates missing payloads
-      prefix_classes       wraps all compilable ObjC classes with prefixing macro and adds -include /path/to/some/dir/PrefixedClassSupport.h to OTHER_C(PLUSPLUS)FLAGS build settings
+      prefix_classes       wraps all compilable ObjC classes with prefixing macro and regenerates BaClassPrefix.h/PrefixedClassAliases.h
       push_archive         pushes archive repo
       push_tags            pushes tags from all submodules
       quit_finder          quit Finder deliberately via AppleScript
       quit_terminal        quit Terminal deliberately via AppleScript
       quit_totalfinder     quit Finder+TotalFinder deliberately via AppleScript
       quit_totalterminal   quit Terminal+TotalTerminal deliberately via AppleScript
-      regen_headers        regenerates PrefixedClassAliases.h
       regen_xcconfigs      regenerates xcconfig files for all .xcodeprojs in a directory tree
       restart_finder       restart Finder deliberately via AppleScript
       restart_terminal     restart Terminal deliberately via AppleScript
