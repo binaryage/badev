@@ -82,7 +82,6 @@ module Badev
         contents.scan(/^BA_PREFIXED_CLASS_SUPPORT\((.*?)\);$/) { |cls| prefixed_classes << cls }
       end
       prefixed_classes.compact.sort.uniq.reverse
-      end
     end
     
     def self.collect_classes(files, wrapped=false)
