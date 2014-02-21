@@ -105,7 +105,7 @@ module Badev
     def self.push_archive(options)
       puts "pushing archive in #{options.archive.blue}"
       Dir.chdir(options.archive) do
-        sys("git push --tags")
+        sys("git push && git push --tags")
       end
     end
     

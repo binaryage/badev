@@ -16,7 +16,7 @@ module Badev
           end
 
           indent do
-            sys("git push --tags")
+            sys("git push && git push --tags")
           end
         end
       end
