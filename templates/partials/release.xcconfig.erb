@@ -19,3 +19,6 @@ ONLY_ACTIVE_ARCH = NO
 
 // Whether to strip debugging symbols when copying the built product to its final installation location
 STRIP_INSTALLED_PRODUCT = YES
+
+// a lot of debug statements might go away and we don't want warnings generated from them in release builds
+<% $shared["WARNING_CFLAGS"] << "-Wno-unused-variable" %>
