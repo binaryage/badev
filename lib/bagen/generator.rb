@@ -3,7 +3,6 @@ require 'xcodeproj'
 require 'pp'
 require 'fileutils'
 require 'erb'
-require 'baproj'
 
 module Bagen
   module Generator
@@ -18,7 +17,6 @@ module Bagen
         @configuration = args[2]
         @target = args[3]
         @precompiled_header = Pathname.new(options.pch)
-        @baproj = Baproj::Project.open(options.root)
         @project_dir = Pathname.new(options.project_dir)
         @args = args
         @options = options
