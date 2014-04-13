@@ -189,7 +189,7 @@ module Badev
             puts "in #{dir.blue}:" if lastdir!=dir
             lastdir = dir
             generator << " --root #{shellescape(root_path)} --project_dir #{shellescape(proj.path.dirname.to_s)}"
-            generator << " --output #{shellescape(generated_xcconfig_path(xcconfig))} --pch #{shellescape(generated_prefix_header_path(target, root_path, conf.name))}"
+            generator << " --output #{shellescape(generated_xcconfig_path(xcconfig))}"
             sys(generator)
           end
         end

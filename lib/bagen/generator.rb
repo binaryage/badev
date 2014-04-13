@@ -16,7 +16,6 @@ module Bagen
         @project = args[1]
         @configuration = args[2]
         @target = args[3]
-        @precompiled_header = Pathname.new(options.pch)
         @project_dir = Pathname.new(options.project_dir)
         @args = args
         @options = options
