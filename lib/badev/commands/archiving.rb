@@ -86,6 +86,11 @@ module Badev
       sys("mkdir dwarfs")
       sys("cp -a \"#{source}\"/* dwarfs")
     end
+
+    def self.copy_obfuscation_table(source)
+      die "obfuscation table missing in #{source.blue}" unless File.exists? source
+      sys("cp \"#{source}\" .")
+    end
     
     def self.write_sha(rev)
       sys("rm sha.txt") if File.exists? "sha.txt"
@@ -96,7 +101,7 @@ module Badev
       sys("rm payload.txt") if File.exists? "payload.txt"
       payload = File.join(payloads, name+".txt")
       unless File.exists? payload then
-        puts red("missing payload: #{payload}")
+        die "missing payload: #{payload}"
       else
         sys("cp \"#{payload}\" payload.txt")
       end
@@ -157,7 +162,7 @@ module Badev
             Dir.chdir(options.archive) do
               puts "in #{options.archive.blue}"
               indent do
-              
+                # reset git state - to recover from potential previous failures
                 sys("git reset --hard HEAD")
                 sys("git clean -fd")
 
@@ -165,8 +170,9 @@ module Badev
 
                 generate_dmg_archive(release)
                 write_sha(rev)
-                copy_payload(payloads, name)
                 copy_dwarfs(File.join(dwarfs_base, ver)) unless options["no-dwarfs"]
+                copy_obfuscation_table(File.join(dwarfs_base, ver, options.otable)) unless options["no-obfuscation"]
+                copy_payload(payloads, name)
 
                 # commit & tag
                 sys("git add . --all")

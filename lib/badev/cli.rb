@@ -35,12 +35,15 @@ class Badev::CLI
       c.option '--archive PATH', String, 'Specify a path for archive'
       c.option '--releases PATH', String, 'Specify a path for releases dir (relative to root)'
       c.option '--payloads PATH', String, 'Specify a path for payloads dir (relative to root)'
+      c.option '--otable PATH', String, 'Specify a path for obfuscation table (relative to DWARFS folder)'
+      c.option '--no-obfuscation', 'Do not include obfuscation table'
       c.option '--no-dwarfs', 'Do not include DWARFs'
       c.action do |args, options|
         options.default :root => Dir.pwd
         options.default :archive => File.expand_path(File.join(options.root, "..", File.basename(options.root)+"-archive"))
         options.default :releases => "release"
         options.default :payloads => "payloads"
+        options.default :otable => "obfuscation.txt"
         Badev::Archiving::archive(options)
       end
     end
