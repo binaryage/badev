@@ -57,10 +57,11 @@ module Badev
               symbols += `nm -aj "#{binary}"` + "\n"
               symbols += "\n"
             end
+
           end
         end
       end
-
+      
       res = ""
       res << "\n"
       res << "#{name}\n"
@@ -73,6 +74,108 @@ module Badev
       res << "\n"
       res << symbols
       res
+    end
+    
+    def self.is_symbol_obfuscation_partial?(name)
+      name =~ /\[(.*)\]/
+      parts = $1.strip.split(" ")
+      sel = parts[1]
+      return false unless sel =~ /\$/
+      chunks = sel.split(":")
+      chunks.each do |chunk|
+        next unless chunk.size>0
+        return true if chunk[0] != "$"
+      end
+      return false
+    end
+
+    def self.is_symbol_obfuscated?(name)
+      name =~ /\[(.*)\]/
+      parts = $1.strip.split(" ")
+      sel = parts[1]
+      sel =~ /\$/
+    end
+    
+    def self.generate_obfuscation_report(dwarf_folder)
+      base_dir = File.expand_path(dwarf_folder)
+      ignores_file = File.join(base_dir, ".obfuscation-ignores")
+      mapping_table_file = File.join(base_dir, "obfuscation.txt")
+      used_symbols_file = File.join(base_dir, "obfuscation_used_symbols.txt")
+      
+      # parse ignores file
+      ignores_data = File.read(ignores_file).split("\n")
+      subexprs = []
+      ignores_data.each do |sre|
+        meat = sre.split('#')[0] # strip comments
+        next unless meat
+        meat.strip!
+        next unless meat.size>0 # skip empty lines
+        subexprs << Regexp.new(meat)
+      end
+      ignores_regexps = Regexp.union(subexprs)
+      
+      # parse mapping table
+      mapping = Hash.new
+      mapping_data = File.read(mapping_table_file).split("\n")
+      mapping_data.each do |element|
+        parts = element.split(" ")
+        mapping[parts[0]] = parts[1]
+      end
+      
+      # process used_symbols_file
+      symbols = []
+      symbols_data = File.read(used_symbols_file).split("\n")
+      symbols_data.each do |symbol|
+        s = Hash.new
+        s[:raw] = symbol
+        s[:translated] = symbol.gsub(/(\$[a-zA-Z0-9_]+)/) do
+          key = mapping[$1]
+          die("unable to translate symbol '#{$1}'") unless key
+          key
+        end
+        s[:ignored] = s[:translated] =~ ignores_regexps
+        unless s[:ignored] then
+          s[:partial] = is_symbol_obfuscation_partial?(s[:raw])
+          unless s[:partial] then
+            s[:fixme] = !is_symbol_obfuscated?(s[:raw])
+            unless s[:fixme] then
+              s[:ok] = true
+            end
+          end
+        end
+        symbols << s
+      end
+      
+      ignored_count = 0
+      partial_count = 0
+      ok_count = 0
+      fixme_count = 0
+      
+      symbols.each do |symbol|
+        ignored_count = ignored_count+1 if symbol[:ignored]
+        partial_count = partial_count+1 if symbol[:partial]
+        ok_count = ok_count+1 if symbol[:ok]
+        fixme_count = fixme_count+1 if symbol[:fixme]
+      end
+      
+      res = []
+      res << "Detected #{symbols.size} methods in our classes (#{ignored_count} ignored, #{ok_count} ok, #{fixme_count} need fixing and #{partial_count} partial)"
+      if (fixme_count>0) then
+        res << ""
+        res << "Non-obfuscated (#{fixme_count}) - need fixing or add them into ignores:"
+        symbols.each do |symbol|
+          res << "  #{symbol[:translated]}" if symbol[:fixme]
+        end
+        res << ""
+      end
+      if (partial_count>0) then
+        res << ""
+        res << "Partially obfuscated (#{partial_count}) - need fixing:"
+        symbols.each do |symbol|
+          res << "  #{symbol[:translated]}" if symbol[:partial]
+        end
+      end
+      res.join("\n")
     end
 
     def self.generate_payload(options, dmg, out)
@@ -108,6 +211,13 @@ module Badev
           pkgs << generate_payload_for_pkg(options, tmp, pkg)
         end
 
+        obfuscation_report = ""
+        Dir.chdir(options.root) do
+          dwarfs_base = read_dwarfs_base_dir()
+          name = File.basename(dmg, ".dmg")
+          ver = name.split("-")[1]
+          obfuscation_report = generate_obfuscation_report(File.join(dwarfs_base, ver))
+        end
 
         outdir = File.dirname out
         `mkdir -p #{outdir}` unless File.exist? outdir
@@ -115,6 +225,12 @@ module Badev
           f << "BASIC DMG LAYOUT\n"
           f << "================\n"
           f << tree1
+
+          f << "\n\n"
+          f << "OBFUSCATION REPORT\n"
+          f << "==================\n"
+          f << obfuscation_report
+          f << "\n\n"
 
           pkgs.each do |pkg|
             f << pkg
