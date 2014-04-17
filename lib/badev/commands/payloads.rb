@@ -226,15 +226,15 @@ module Badev
           f << "================\n"
           f << tree1
 
+          pkgs.each do |pkg|
+            f << pkg
+          end
+          
           f << "\n\n"
           f << "OBFUSCATION REPORT\n"
           f << "==================\n"
           f << obfuscation_report
           f << "\n\n"
-
-          pkgs.each do |pkg|
-            f << pkg
-          end
         end
 
         sys("hdiutil detach #{disk}")
