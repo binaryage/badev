@@ -152,7 +152,25 @@ RUN_CLANG_STATIC_ANALYZER = NO
 TEST_AFTER_BUILD = NO
 
 // Disable GCC compatibility warnings
-<% $shared["WARNING_CFLAGS"] << "-Wno-gcc-compat" %>
+<% 
+
+flags = $shared["WARNING_CFLAGS"]
+flags << "-Wextra"
+flags << "-Wself-assign"
+flags << "-Wno-gcc-compat"
+flags << "-Wno-unused-parameter"
+flags << "-Wstrict-prototypes"
+flags << "-Wunreachable-code"
+flags << "-Wunused-member-function"
+flags << "-Wuninitialized"
+flags << "-Wsuper-class-method-mismatch"
+flags << "-Warc-abi"
+flags << "-Warc-retain-cycles"
+flags << "-Warc-unsafe-retained-assign"
+flags << "-Warc-non-pod-memaccess"
+flags << "-Wbind-to-temporary-copy"
+
+%>
 
 // Disable legacy-compatible header searching
 ALWAYS_SEARCH_USER_PATHS = NO
