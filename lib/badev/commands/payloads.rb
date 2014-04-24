@@ -222,6 +222,11 @@ module Badev
         outdir = File.dirname out
         `mkdir -p #{outdir}` unless File.exist? outdir
         File.open(out, "w") do |f|
+          f << "OBFUSCATION REPORT\n"
+          f << "==================\n"
+          f << obfuscation_report
+          f << "\n\n"
+          
           f << "BASIC DMG LAYOUT\n"
           f << "================\n"
           f << tree1
@@ -229,12 +234,6 @@ module Badev
           pkgs.each do |pkg|
             f << pkg
           end
-          
-          f << "\n\n"
-          f << "OBFUSCATION REPORT\n"
-          f << "==================\n"
-          f << obfuscation_report
-          f << "\n\n"
         end
 
         sys("hdiutil detach #{disk}")
