@@ -173,6 +173,7 @@ module Badev
                 copy_dwarfs(File.join(dwarfs_base, ver)) unless options["no-dwarfs"]
                 copy_obfuscation_table(File.join(dwarfs_base, ver, options.otable)) unless options["no-obfuscation"]
                 copy_payload(payloads, name)
+                sys("rm dwarfs/obfuscation*") # quick hack to remove misplaced files
 
                 # commit & tag
                 sys("git add . --all")
