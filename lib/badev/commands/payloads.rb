@@ -33,13 +33,10 @@ module Badev
 
             tree = `tree --dirsfirst -apsugif`
             binaries = []
-            Dir.glob("**/Frameworks/*.framework") do |framework|
-              base = File.basename framework, ".framework"
-              full = File.join(framework, base)
-              binaries << full
-            end
-            Dir.glob("**/MacOS/*") do |exe|
-              binaries << exe
+            Dir.glob("**/*") do |file|
+              next unless File.executable? file
+              next unless `file \"#{file}\"` =~ /Mach-O/
+              binaries << file
             end
 
             binaries.each do |binary|
