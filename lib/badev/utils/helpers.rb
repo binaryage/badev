@@ -95,8 +95,10 @@ module Badev
     
     def read_dwarfs_base_dir
       return File.expand_path(File.read("shared/.dwarfs").strip) if File.exists? "shared/.dwarfs" # hack for TotalFinder
-      
-      die(".dwarfs file is not present in #{Dir.pwd.blue}") unless File.exists? ".dwarfs"
+      unless File.exists? ".dwarfs"
+        puts ".dwarfs file is not present in #{Dir.pwd.blue}".red 
+        return nil
+      end
       File.expand_path(File.read(".dwarfs").strip)
     end
         

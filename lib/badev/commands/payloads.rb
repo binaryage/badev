@@ -18,7 +18,8 @@ module Badev
       name = File.basename pkg
 
       Dir.chdir(extractor_dir) do
-        sys("xar -xf \"#{name}\"")
+        sys("mv \"#{name}\" \"__#{name}\"") # this is here to prevent name clash, Asepsis.pkg archive file was extracted into Asepsis.pkg folder
+        sys("xar -xf \"__#{name}\"")
         
         Dir.glob("*.pkg") do |file|
           next unless File.directory? file
@@ -214,18 +215,22 @@ module Badev
         obfuscation_report = ""
         Dir.chdir(options.root) do
           dwarfs_base = read_dwarfs_base_dir()
-          name = File.basename(dmg, ".dmg")
-          ver = name.split("-")[1]
-          obfuscation_report = generate_obfuscation_report(File.join(dwarfs_base, ver))
+          if dwarfs_base then
+            name = File.basename(dmg, ".dmg")
+            ver = name.split("-")[1]
+            obfuscation_report = generate_obfuscation_report(File.join(dwarfs_base, ver))
+          end
         end
 
         outdir = File.dirname out
         `mkdir -p #{outdir}` unless File.exist? outdir
         File.open(out, "w") do |f|
-          f << "OBFUSCATION REPORT\n"
-          f << "==================\n"
-          f << obfuscation_report
-          f << "\n\n"
+          if obfuscation_report.size>0 then
+            f << "OBFUSCATION REPORT\n"
+            f << "==================\n"
+            f << obfuscation_report
+            f << "\n\n"
+          end
           
           f << "BASIC DMG LAYOUT\n"
           f << "================\n"
