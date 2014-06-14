@@ -39,6 +39,8 @@ module Badev
               binaries << file
             end
 
+            binaries.reject! {|file| File.symlink? file }
+            
             binaries.each do |binary|
               exes += `file "#{binary}"` + "\n"
             end
