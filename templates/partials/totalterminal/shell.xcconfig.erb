@@ -2,8 +2,8 @@
 /// Specific configuration for TotalTerminal shell
 ///
 
-GCC_PREFIX_HEADER = TotalTerminalShared.pch
-INFOPLIST_FILE = Info.plist
+GCC_PREFIX_HEADER = shell/TotalTerminalShared.pch
+INFOPLIST_FILE = shell/Info.plist
 PRODUCT_NAME = TotalTerminal
 
-<% $shared["HEADER_SEARCH_PATHS"] << "$(SRCROOT)/../headers" %>
+<% $shared["HEADER_SEARCH_PATHS"] << "$(SRCROOT)/headers" %>

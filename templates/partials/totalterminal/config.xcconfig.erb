@@ -1,7 +1,7 @@
 // totalterminal-specific logic
 <%
 
-$helpers = %w(TotalTerminal TotalTerminal-osax)
+$helpers = %w(TotalTerminal OSAX)
 
 def is_totalterminal_helper?
   $helpers.include? @project
@@ -21,7 +21,7 @@ def is_bundle?
 end
 
 def is_osax?
-  @project=="TotalTerminal-osax" and @target == "TotalTerminal"
+  @project=="OSAX" and @target == "TotalTerminal"
 end
 
 %>

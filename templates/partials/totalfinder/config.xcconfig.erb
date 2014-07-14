@@ -20,7 +20,7 @@ $plugins = [
   'Tests'
 ]
 $frameworks = %w(BAKit TotalKit Sparkle)
-$helpers = %w(Shell TotalFinder-osax Agent Uninstaller CrashWatcher)
+$helpers = %w(Shell OSAX Agent Uninstaller CrashWatcher)
 
 def is_totalfinder_plugin?
   $plugins.include? @project and $plugins.include? @target
@@ -60,7 +60,7 @@ def is_app?
 end
 
 def is_osax?
-  @project=="TotalFinder-osax" and @target == "TotalFinder"
+  @project=="OSAX" and @target == "TotalFinder"
 end
 
 %>
