@@ -2,8 +2,8 @@
 /// Base configuration for all TotalFinder projects
 ///
 
-// TotalFinder should run on 10.7+
-MACOSX_DEPLOYMENT_TARGET = 10.7
+// TotalFinder should run on 10.8+
+MACOSX_DEPLOYMENT_TARGET = 10.8
 SDKROOT = macosx
 
 // use modern C++ and stdlib
@@ -26,7 +26,7 @@ INFOPLIST_FILE = <%= @target %>-Info.plist
 
 GCC_PRECOMPILE_PREFIX_HEADER = YES
 GCC_PREFIX_HEADER = <%= @target %>-Prefix.pch
-GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES
+GCC_INCREASE_PRECOMPILED_HEADER_SHARING = NO
 
 <% $shared["WARNING_CFLAGS"] << "-Wthread-safety" << "-Wthread-safety-beta" %>
 <% $shared["OTHER_LDFLAGS"] << "-undefined dynamic_lookup" << "-headerpad_max_install_names" %>
