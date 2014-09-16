@@ -88,7 +88,10 @@ module Badev
     end
 
     def self.copy_obfuscation_table(source)
-      die "obfuscation table missing in #{source.blue}" unless File.exists? source
+      unless File.exists? source
+        puts "obfuscation table missing in #{source.blue}".red 
+        return
+      end
       sys("cp \"#{source}\" .")
     end
     
@@ -173,7 +176,7 @@ module Badev
                 copy_dwarfs(File.join(dwarfs_base, ver)) unless options["no-dwarfs"]
                 copy_obfuscation_table(File.join(dwarfs_base, ver, options.otable)) unless options["no-obfuscation"]
                 copy_payload(payloads, name)
-                sys("rm dwarfs/obfuscation*") # quick hack to remove misplaced files
+                sys("rm dwarfs/obfuscation*", true) # quick hack to remove misplaced files
 
                 # commit & tag
                 sys("git add . --all")

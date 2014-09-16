@@ -102,6 +102,11 @@ module Badev
       mapping_table_file = File.join(base_dir, "obfuscation.txt")
       used_symbols_file = File.join(base_dir, "obfuscation_used_symbols.txt")
       
+      unless File.exists? ignores_file then
+        puts "skipping obfuscation report".red + " - #{ignores_file.yellow} is missing"
+        return ""
+      end
+      
       # parse ignores file
       ignores_data = File.read(ignores_file).split("\n")
       subexprs = []
