@@ -54,7 +54,7 @@ module Badev
           sys("mkdir -p \"#{tmp}\"")
 
           res = sys("hdiutil attach \"#{dmg}\" -mountrandom \"#{TMP_PAYLOADS_DIR}\"")
-          disk = res.split("\n")[0].split("\t")[0].strip
+          disk = res.split("\n").select{|l| l.strip=~/\/dev/}.first.split("\t").first.strip
           volume = ""
           res.each_line do |line|
             next unless line =~ /Apple_HFS/
