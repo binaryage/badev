@@ -9,6 +9,7 @@ COPY_PHASE_STRIP = NO
 GCC_OPTIMIZATION_LEVEL = 0
 
 <% $shared["GCC_PREPROCESSOR_DEFINITIONS"] << "DEBUG=1" %>
+<% $shared["GCC_PREPROCESSOR_DEFINITIONS"] << "LOGGING_SUPPORT=1" %>
 
 // Whether to enable link-time optimizations (such as inlining across translation units)
 LLVM_LTO = NO
