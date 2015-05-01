@@ -5,7 +5,7 @@ A general command-line tool to aid project development in BinaryAge.
 ## installation
 
     git clone git@github.com:binaryage/badev.git
-    gem install xcodeproj commander colored
+    bundle install
     export PATH=$PATH:`pwd`/badev/bin
     badev --help
 ## usage
