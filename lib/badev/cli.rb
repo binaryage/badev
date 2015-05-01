@@ -24,7 +24,6 @@ class Badev::CLI
     program :name, 'badev'
     program :version, Badev::VERSION
     program :description, 'A helper tool for development in BinaryAge'
-    program :help_formatter, :compact
     
     global_option('-d', '--dry-run', 'Show what would happen') { $dry_run = true }
 
