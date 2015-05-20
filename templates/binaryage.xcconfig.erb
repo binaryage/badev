@@ -10,6 +10,7 @@
 // add configuration specific values
 <%= include("partials/debug") if debug_configuration? %>
 <%= include("partials/release") if release_configuration? %>
+<%= include("partials/releaselogging") if releaselogging_configuration? %>
 
 // product-related configurations
 <%= include("partials/totalfinder/config") %>
