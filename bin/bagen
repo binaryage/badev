@@ -3,10 +3,10 @@
 
 # resolve bin path, ignoring symlinks
 require "pathname"
-bin_file = Pathname.new(__FILE__).realpath
+bin_dir = File.dirname(Pathname.new(__FILE__).realpath)
 
 # add self to libpath
-$:.unshift File.expand_path("../../lib", bin_file)
+$:.unshift File.expand_path("../lib", bin_dir)
 
 require "bagen/cli"
 Bagen::CLI.start(*ARGV)
