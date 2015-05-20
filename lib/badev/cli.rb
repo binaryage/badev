@@ -7,7 +7,6 @@ require "badev"
 require "badev/utils/helpers"
 
 require "badev/commands/xcconfig"
-require "badev/commands/classprefixer"
 require "badev/commands/retagging"
 require "badev/commands/pushtags"
 require "badev/commands/osax"
@@ -148,26 +147,6 @@ class Badev::CLI
       c.action do |args, options|
         options.default :root => Dir.pwd
         Badev::PushTags::push_tags(options)
-      end
-    end
-
-    command :prefix_classes do |c|
-      c.description = 'wraps all compilable ObjC classes with prefixing macro and adds -include /path/to/some/dir/PrefixedClassSupport.h to OTHER_C(PLUSPLUS)FLAGS build settings'
-      c.syntax = 'badev prefix_classes [--root some/dir]'
-      c.option '--root PATH', String, 'Specify root path'
-      c.action do |args, options|
-        options.default :root => Dir.pwd
-        Badev::ClassPrefixer::prefix_classes(args, options)
-      end
-    end
-
-    command :init_headers do |c|
-      c.description = 'creates BaClassPrefix.h/PrefixedClassAliases.h and a generates precompiled headers for all .xcodeprojs in a directory tree'
-      c.syntax = 'badev init_class_prefix_headers [--root some/dir]'
-      c.option '--root PATH', String, 'Specify root path'
-      c.action do |args, options|
-        options.default :root => Dir.pwd
-        Badev::ClassPrefixer::init_headers(args, options)
       end
     end
 
