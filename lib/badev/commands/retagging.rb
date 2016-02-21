@@ -27,7 +27,7 @@ module Badev
                   end
                 else
                   sys("git tag -d #{prefixed_tag}") if tag_exists
-                  sys("git tag '#{prefixed_tag}' #{sha}", true)
+                  sys("git tag -a '#{prefixed_tag}' #{sha} -m \"retagged from parent repo\"", true)
                 end
               end
             end
