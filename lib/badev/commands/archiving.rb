@@ -140,6 +140,7 @@ module Badev
         
         tags = []
         Dir.chdir(options.archive) do
+          sys("git pull")
           tags = `git tag`.strip.split "\n"
         end
         
