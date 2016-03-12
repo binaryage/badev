@@ -158,8 +158,10 @@ module Badev
 
           dmgs.each do |file|
             name = File.basename(file, ".dmg")
+            product = name.split("-")[0]
+            product_lowercase = downcase.downcase
             ver = name.split("-")[1]
-            tag = "v"+ver
+            tag = "#{product_lowercase}-archive-v"+ver
             next if tags.include? tag
             
             Dir.chdir(options.archive) do
@@ -180,7 +182,7 @@ module Badev
 
                 # commit & tag
                 sys("git add . --all")
-                sys("git commit -a --allow-empty -m \"Release #{tag}\"")
+                sys("git commit -a --allow-empty -m \"#{product} release #{ver}\"")
                 sys("git tag #{tag}")
               end
             end
