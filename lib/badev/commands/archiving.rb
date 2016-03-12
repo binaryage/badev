@@ -133,6 +133,7 @@ module Badev
             indent do
               sys("git init")
               sys("git commit --allow-empty -m \"BIG BANG!\"")
+              puts "Important: you still have to setup proper product branch (e.g. totalfinder-archive) and remote repo url for pushing (e.g. binaryage/root)."
             end
           end
         end
