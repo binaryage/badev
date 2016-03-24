@@ -163,7 +163,7 @@ module Badev
             product = name.split("-")[0]
             product_lowercase = product.downcase
             ver = name.split("-")[1]
-            tag = "#{product_lowercase}-archive-v"+ver
+            tag = "#{product_lowercase}-archive-v#{ver}"
             next if tags.include? tag
             
             Dir.chdir(options.archive) do
@@ -184,8 +184,10 @@ module Badev
 
                 # commit & tag
                 sys("git add . --all")
-                sys("git commit -a --allow-empty -m \"#{product} release #{ver}\"")
-                sys("git tag #{tag}")
+                # for some reason sys started to freeze on git commit on my machine
+                # sys("git commit -a --allow-empty -m \"#{product} release #{ver}\"")
+                `git commit -a --allow-empty -m "#{product} release #{ver}"`
+                sys("git tag -a #{tag} -m \"#{product} release #{ver}\"")
               end
             end
           end
