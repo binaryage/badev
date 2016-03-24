@@ -161,7 +161,7 @@ module Badev
           dmgs.each do |file|
             name = File.basename(file, ".dmg")
             product = name.split("-")[0]
-            product_lowercase = downcase.downcase
+            product_lowercase = product.downcase
             ver = name.split("-")[1]
             tag = "#{product_lowercase}-archive-v"+ver
             next if tags.include? tag
