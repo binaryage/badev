@@ -30,10 +30,10 @@ PenaltyReturnTypeOnItsOwnLine: 200
 PointerBindsToType: true
 SpacesBeforeTrailingComments: 2
 Cpp11BracedListStyle: true
-Standard:        Cpp11
-IndentWidth:     2
-TabWidth:        2
-UseTab:          Never
+Standard: Cpp11
+IndentWidth: 2
+TabWidth: 2
+UseTab: Never
 BreakBeforeBraces: Attach
 IndentFunctionDeclarationAfterType: true
 SpacesInParentheses: false
@@ -44,4 +44,4 @@ SpaceAfterControlStatementKeyword: true
 SpaceBeforeAssignmentOperators: true
 ContinuationIndentWidth: 4
 ...
-
+...
