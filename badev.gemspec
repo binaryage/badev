@@ -22,6 +22,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake"
 
   spec.add_runtime_dependency 'commander'
-  spec.add_runtime_dependency 'xcodeproj'
+  spec.add_runtime_dependency 'xcodeproj', '~> 1.0.0.beta.4'
   spec.add_runtime_dependency 'colored'
 end
