@@ -30,9 +30,9 @@ module Badev
       output = ''
       unless $dry_run
         status = nil
-        output = Open3.popen3(cmd) do |_stdin, stdout, _stderr, wait_thr|
+        output = Open3.popen2e(cmd) do |_stdin, out_and_err, wait_thr|
           status = wait_thr.value
-          stdout.read
+          out_and_err.read
         end
 
         indent do
@@ -40,7 +40,7 @@ module Badev
         end
 
         if status.exitstatus > 0
-          die('failed', status.exitstatus) unless soft
+          die("failed with code #{status.exitstatus}", status.exitstatus) unless soft
         end
       end
 
