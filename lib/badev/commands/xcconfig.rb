@@ -5,9 +5,9 @@ module Badev
 
     extend Badev::Helpers
 
-    XCPROJECT = File.join(TOOLS_DIR, "xcproject")
+    XCPROJECT = File.join(TOOLS_DIR, 'xcproject')
 
-    def self.prefix_header_path(target, root_dir, conf="Debug")
+    def self.prefix_header_path(target, root_dir, conf='Debug')
       return nil if target.nil? or root_dir.nil?
       original_pch = `#{XCPROJECT} print-settings -e -p #{shellescape(target.project.path)} -t #{shellescape(target.name)} -c #{shellescape(conf)} GCC_PREFIX_HEADER`.strip
       original = Pathname.new(original_pch)
@@ -20,7 +20,7 @@ module Badev
       original
     end
 
-    def self.generated_prefix_header_path(target, root_dir, conf="Debug")
+    def self.generated_prefix_header_path(target, root_dir, conf='Debug')
       return nil if target.nil?
       # get the originally specified precompiled header
       original = prefix_header_path(target, root_dir, conf)
@@ -40,7 +40,7 @@ module Badev
 
       dirs.each do |base|
         if File.exists? base then
-          Dir.glob(File.join(base, "**/*.xcodeproj")) do |dir|
+          Dir.glob(File.join(base, '**/*.xcodeproj')) do |dir|
             xcodeprojs << File.expand_path(dir)
           end
         end
@@ -52,7 +52,7 @@ module Badev
     def self.make_xcconfig_line(key, value)
       v = value
       if value.kind_of?(Array) then
-        v = value.join(" ")
+        v = value.join(' ')
       end
 
       "#{key} = #{v}"
@@ -81,11 +81,11 @@ module Badev
       // here you can follow with your custom settings overrides if needed
       XEND
 
-      export = ""
+      export = ''
       settings_list.each do |settings|
         export += "\n"
         settings.each do |key, value|
-          export += "// " + make_xcconfig_line(key, value) + "\n"
+          export += '// ' + make_xcconfig_line(key, value) + "\n"
         end
       end
 
@@ -93,7 +93,7 @@ module Badev
     end
 
     def self.generated_xcconfig_path(xcconfig)
-      return "" if xcconfig.nil?
+      return '' if xcconfig.nil?
       xcconfig = Pathname.new(xcconfig)
       return xcconfig if xcconfig.to_s =~ /_generated\.xcconfig$/
       xcconfig.dirname.join("#{xcconfig.basename(xcconfig.extname)}_generated.xcconfig").to_s
@@ -104,12 +104,12 @@ module Badev
     end
     
     def self.original_xcconfig_include_path(current, xcconfig)
-      return "" if current.empty? or xcconfig == current
+      return '' if current.empty? or xcconfig == current
       Pathname.new(current).relative_path_from(Pathname.new(xcconfig).dirname).to_s
     end
 
     def self.init_configs_for_proj(proj, dest, options)
-      basename = File.basename proj.path, ".xcodeproj"
+      basename = File.basename proj.path, '.xcodeproj'
 
       # create xcconfig file for each configuration-target combination
       proj.build_configurations.each do |conf|
@@ -126,12 +126,12 @@ module Badev
 
           # TODO: here we should sanitize filenames for bad characters
           filename = File.join(dest, "#{basename}_#{conf.name}_#{target.name}.xcconfig")
-          destname = (File.basename filename, ".xcconfig") + "_generated.xcconfig"
+          destname = (File.basename filename, '.xcconfig') + '_generated.xcconfig'
           original_xcconfig = original_xcconfig_path(target, conf)
           unless File.exists? filename
             content = build_default_xcconfig(destname, basename, conf.name, target.name, [configuration_settings, target_settings], original_xcconfig_include_path(original_xcconfig, filename))
             File.open(filename, 'w') { |file| file.write(content) }
-            relpath = "./"+Pathname.new(filename).relative_path_from(Pathname.pwd).to_s
+            relpath = './'+Pathname.new(filename).relative_path_from(Pathname.pwd).to_s
             puts "generated: #{relpath.yellow}"
           else
             puts "#{filename.blue} already exists => skipping"
@@ -153,7 +153,7 @@ module Badev
       return unless i
       lines[0] = lines[0].slice(0,i).rstrip
       content = lines.join("\n")
-      File.open(path, "w") { |file| file.write(content) }
+      File.open(path, 'w') { |file| file.write(content) }
     end
 
     def self.parse_xcconfig_header(path)
@@ -169,7 +169,7 @@ module Badev
       xcodeprojs = collect_xcodeprojs([options.root])
 
       xcodeprojs.each do |xcodeproj|
-        xcconfig_dir = xcodeproj.gsub(".xcodeproj", ".xcconfigs")
+        xcconfig_dir = xcodeproj.gsub('.xcodeproj', '.xcconfigs')
         proj = Xcodeproj::Project.open(xcodeproj)
         FileUtils.mkdir_p xcconfig_dir
         init_configs_for_proj(proj, xcconfig_dir, options)

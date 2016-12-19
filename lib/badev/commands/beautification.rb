@@ -2,10 +2,10 @@ module Badev
   module Beautification
     extend Badev::Helpers
 
-    CLANG_FORMAT = File.join(TOOLS_DIR, "clang-format")
-    CLANG_FORMAT_CONFIG = File.join(CONFIGS_DIR, ".clang-format")
-    UNCRUSTIFY_CONFIG = File.join(CONFIGS_DIR, "uncrustify.cfg")
-    BEAUTIFY_CONFIG_NAME = ".beautify"
+    CLANG_FORMAT = File.join(TOOLS_DIR, 'clang-format')
+    CLANG_FORMAT_CONFIG = File.join(CONFIGS_DIR, '.clang-format')
+    UNCRUSTIFY_CONFIG = File.join(CONFIGS_DIR, 'uncrustify.cfg')
+    BEAUTIFY_CONFIG_NAME = '.beautify'
     
     def self.temp_clang_config(config)
       `cp "#{config}" .clang-format`
@@ -36,7 +36,7 @@ module Badev
               puts "using #{BEAUTIFY_CONFIG_NAME.blue} config with #{excludes.size} excludes"
             end
           
-            filter = Regexp.new (options.filter or "")
+            filter = Regexp.new (options.filter or '')
             files = `git ls-tree -r HEAD --name-only`.strip.split("\n") # list files under version control
             
             temp_clang_config(CLANG_FORMAT_CONFIG) do
@@ -59,7 +59,7 @@ module Badev
       
           if options.all then
             submodules = []
-            submodules = `grep path .gitmodules | sed 's/.*= //'`.split "\n" if File.exists? ".gitmodules"
+            submodules = `grep path .gitmodules | sed 's/.*= //'`.split "\n" if File.exists? '.gitmodules'
             submodules.each do |path|
               sub_path = File.join(dir, path)
               walk_submodules(options, sub_path)

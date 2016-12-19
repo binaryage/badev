@@ -31,7 +31,7 @@ module Badev
 
     def self.restart_terminal(options)
       sys(QUIT_TERMINAL_CMD)
-      sys("sleep 1")
+      sys('sleep 1')
       sys(LAUNCH_TERMINAL_CMD)
     end
 
@@ -42,7 +42,7 @@ module Badev
 
     def self.restart_totalterminal(options)
       sys(QUIT_TERMINAL_CMD)
-      sys("sleep 1")
+      sys('sleep 1')
       sys(INJECT_TOTALTERMINAL_CMD)
     end
 

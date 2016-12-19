@@ -31,7 +31,7 @@ module Badev
 
     def self.restart_finder(options)
       sys(QUIT_FINDER_CMD)
-      sys("sleep 1")
+      sys('sleep 1')
       sys(LAUNCH_FINDER_CMD)
     end
 
@@ -42,7 +42,7 @@ module Badev
 
     def self.restart_totalfinder(options)
       sys(QUIT_FINDER_CMD)
-      sys("sleep 1")
+      sys('sleep 1')
       sys(INJECT_TOTALFINDER_CMD)
     end
 

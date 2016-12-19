@@ -4,7 +4,7 @@
 <%=
   shared_lines = []
   $shared.each do |key, values|
-    vals = values.join(" ")
+    vals = values.join(' ')
     shared_lines << "#{key} = #{vals}" unless values.empty?
   end
 

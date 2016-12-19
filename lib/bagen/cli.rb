@@ -1,9 +1,9 @@
 require 'commander/import'
 require 'colored'
 
-require "bagen"
-require "bagen/helpers"
-require "bagen/generator"
+require 'bagen'
+require 'bagen/helpers'
+require 'bagen/generator'
 
 class Bagen::CLI
 

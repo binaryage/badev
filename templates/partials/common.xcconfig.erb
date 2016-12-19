@@ -154,21 +154,21 @@ TEST_AFTER_BUILD = NO
 // Disable GCC compatibility warnings
 <% 
 
-flags = $shared["WARNING_CFLAGS"]
-flags << "-Wextra"
-flags << "-Wself-assign"
-flags << "-Wno-gcc-compat"
-flags << "-Wno-unused-parameter"
-flags << "-Wstrict-prototypes"
-flags << "-Wunreachable-code"
-flags << "-Wunused-member-function"
-flags << "-Wuninitialized"
-flags << "-Wsuper-class-method-mismatch"
-flags << "-Warc"
-flags << "-Warc-retain-cycles"
-flags << "-Warc-unsafe-retained-assign"
-flags << "-Warc-non-pod-memaccess"
-flags << "-Wbind-to-temporary-copy"
+flags = $shared['WARNING_CFLAGS']
+flags << '-Wextra'
+flags << '-Wself-assign'
+flags << '-Wno-gcc-compat'
+flags << '-Wno-unused-parameter'
+flags << '-Wstrict-prototypes'
+flags << '-Wunreachable-code'
+flags << '-Wunused-member-function'
+flags << '-Wuninitialized'
+flags << '-Wsuper-class-method-mismatch'
+flags << '-Warc'
+flags << '-Warc-retain-cycles'
+flags << '-Warc-unsafe-retained-assign'
+flags << '-Warc-non-pod-memaccess'
+flags << '-Wbind-to-temporary-copy'
 
 %>
 

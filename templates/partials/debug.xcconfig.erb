@@ -8,8 +8,8 @@ COPY_PHASE_STRIP = NO
 // The optimization level (0, 1, 2, 3, s) for the produced binary
 GCC_OPTIMIZATION_LEVEL = 0
 
-<% $shared["GCC_PREPROCESSOR_DEFINITIONS"] << "DEBUG=1" %>
-<% $shared["GCC_PREPROCESSOR_DEFINITIONS"] << "LOGGING_SUPPORT=1" %>
+<% $shared['GCC_PREPROCESSOR_DEFINITIONS'] << 'DEBUG=1' %>
+<% $shared['GCC_PREPROCESSOR_DEFINITIONS'] << 'LOGGING_SUPPORT=1' %>
 
 // Whether to enable link-time optimizations (such as inlining across translation units)
 LLVM_LTO = NO
@@ -18,7 +18,7 @@ LLVM_LTO = NO
 ONLY_ACTIVE_ARCH = YES
 
 // These settings catch some errors in integer arithmetic and some instances of undefined behavior
-<% $shared["OTHER_CPLUSPLUSFLAGS"] << "-ftrapv" << "-fsanitize=undefined-trap" << "-fsanitize-undefined-trap-on-error" %>
+<% $shared['OTHER_CPLUSPLUSFLAGS'] << '-ftrapv' << '-fsanitize=undefined-trap' << '-fsanitize-undefined-trap-on-error' %>
 
 // Whether to strip debugging symbols when copying the built product to its final installation location
 STRIP_INSTALLED_PRODUCT = NO

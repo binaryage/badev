@@ -1,4 +1,4 @@
-require "bagen/version"
+require 'bagen/version'
 
 module Bagen
 

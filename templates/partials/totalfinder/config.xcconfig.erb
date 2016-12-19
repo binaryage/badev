@@ -65,20 +65,20 @@ end
 
 %>
 
-<%= include("base") if is_totalfinder? %>
-<%= include("debug") if is_totalfinder? and debug_configuration? %>
-<%= include("release") if is_totalfinder? and release_configuration? %>
-<%= include("plugin") if is_totalfinder_plugin? %>
-<%= include("framework") if is_totalfinder_framework? %>
-<%= include("shell") if is_totalfinder_shell? %>
-<%= include("agent") if @target=="Agent" %>
-<%= include("uninstaller") if @target=="Uninstaller" %>
-<%= include("app") if is_app? %>
-<%= include("bundle") if is_bundle? %>
-<%= include("osax") if is_osax? %>
+<%= include('base') if is_totalfinder? %>
+<%= include('debug') if is_totalfinder? and debug_configuration? %>
+<%= include('release') if is_totalfinder? and release_configuration? %>
+<%= include('plugin') if is_totalfinder_plugin? %>
+<%= include('framework') if is_totalfinder_framework? %>
+<%= include('shell') if is_totalfinder_shell? %>
+<%= include('agent') if @target=='Agent' %>
+<%= include('uninstaller') if @target=='Uninstaller' %>
+<%= include('app') if is_app? %>
+<%= include('bundle') if is_bundle? %>
+<%= include('osax') if is_osax? %>
 
 // here I use a small shortcut, TotalKit and all plugins are on same directory level relative to headers folder
-<% $shared["HEADER_SEARCH_PATHS"] << "$(SRCROOT)/../../headers" if needs_finder_headers? %>
+<% $shared['HEADER_SEARCH_PATHS'] << '$(SRCROOT)/../../headers' if needs_finder_headers? %>
 
 <% unless is_totalfinder_framework? then %>
 // we want to treat all symbols as private in non-libraries

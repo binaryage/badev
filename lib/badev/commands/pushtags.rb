@@ -9,14 +9,14 @@ module Badev
           puts "in #{dir.blue}"
       
           submodules = []
-          submodules = `grep path .gitmodules | sed 's/.*= //'`.split "\n" if File.exists? ".gitmodules"
+          submodules = `grep path .gitmodules | sed 's/.*= //'`.split "\n" if File.exists? '.gitmodules'
           submodules.each do |path|
             sub_path = File.join(dir, path)
             walk_submodules(sub_path, level+1)
           end
 
           indent do
-            sys("git push && git push --tags", true)
+            sys('git push && git push --tags', true)
           end
         end
       end

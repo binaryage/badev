@@ -2,7 +2,7 @@
 /// Base configuration for a ReleaseLogging build of any project
 ///
 
-<%= include("release") %>
+<%= include('release') %>
 
-<% $shared["GCC_PREPROCESSOR_DEFINITIONS"] << "LOGGING_SUPPORT=1" %>
-<% $shared["GCC_PREPROCESSOR_DEFINITIONS"] << "LOGGING_TO_FILE=1" %>
+<% $shared['GCC_PREPROCESSOR_DEFINITIONS'] << 'LOGGING_SUPPORT=1' %>
+<% $shared['GCC_PREPROCESSOR_DEFINITIONS'] << 'LOGGING_TO_FILE=1' %>

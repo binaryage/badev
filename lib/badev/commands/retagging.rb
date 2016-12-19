@@ -34,10 +34,10 @@ module Badev
           end
       
           submodules = []
-          submodules = `grep path .gitmodules | sed 's/.*= //'`.split "\n" if File.exists? ".gitmodules"
+          submodules = `grep path .gitmodules | sed 's/.*= //'`.split "\n" if File.exists? '.gitmodules'
           submodules.each do |path|
             sub_path = File.join(dir, path)
-            sub_sha = `git ls-tree #{sha} #{path}`.split(" ")[2]
+            sub_sha = `git ls-tree #{sha} #{path}`.split(' ')[2]
             walk_submodules(sub_path, prefixed_tag, sub_sha, level+1)
           end
         end

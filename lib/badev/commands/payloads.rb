@@ -2,15 +2,15 @@ module Badev
   module Payloads
     extend Badev::Helpers
     
-    TMP_PAYLOADS_DIR = "/tmp/payloads"
+    TMP_PAYLOADS_DIR = '/tmp/payloads'
     
     def self.generate_payload_for_pkg(options, tmp, pkg)
-      tree = ""
-      exes = ""
-      deps = ""
-      symbols = ""
+      tree = ''
+      exes = ''
+      deps = ''
+      symbols = ''
 
-      extractor_dir = File.join(tmp, "payload-extractor")
+      extractor_dir = File.join(tmp, 'payload-extractor')
       sys("rm -rf \"#{extractor_dir}\"") if File.exist? extractor_dir
       sys("mkdir -p \"#{extractor_dir}\"")
       sys("cp \"#{pkg}\" \"#{extractor_dir}\"")
@@ -21,19 +21,19 @@ module Badev
         sys("mv \"#{name}\" \"__#{name}\"") # this is here to prevent name clash, Asepsis.pkg archive file was extracted into Asepsis.pkg folder
         sys("xar -xf \"__#{name}\"")
         
-        Dir.glob("*.pkg") do |file|
+        Dir.glob('*.pkg') do |file|
           next unless File.directory? file
           
           Dir.chdir(file) do
-            if (File.exist? "Payload") then
-              sys("mv Payload Payload.gz")
-              sys("gunzip Payload.gz")
-              sys("cpio -id < Payload")
+            if (File.exist? 'Payload') then
+              sys('mv Payload Payload.gz')
+              sys('gunzip Payload.gz')
+              sys('cpio -id < Payload')
             end
 
             tree = `tree --dirsfirst -apsugif`
             binaries = []
-            Dir.glob("**/*") do |file|
+            Dir.glob('**/*') do |file|
               next unless File.executable? file
               next unless `file \"#{file}\"` =~ /Mach-O/
               binaries << file
@@ -62,7 +62,7 @@ module Badev
         end
       end
       
-      res = ""
+      res = ''
       res << "\n"
       res << "#{name}\n"
       res << "=======================================================================\n"
@@ -78,33 +78,33 @@ module Badev
     
     def self.is_symbol_obfuscation_partial?(name)
       name =~ /\[(.*)\]/
-      parts = $1.strip.split(" ")
+      parts = $1.strip.split(' ')
       sel = parts[1]
       return false unless sel =~ /\$/
-      chunks = sel.split(":")
+      chunks = sel.split(':')
       chunks.each do |chunk|
         next unless chunk.size>0
-        return true if chunk[0] != "$"
+        return true if chunk[0] != '$'
       end
       return false
     end
 
     def self.is_symbol_obfuscated?(name)
       name =~ /\[(.*)\]/
-      parts = $1.strip.split(" ")
+      parts = $1.strip.split(' ')
       sel = parts[1]
       sel =~ /\$/
     end
     
     def self.generate_obfuscation_report(dwarf_folder)
       base_dir = File.expand_path(dwarf_folder)
-      ignores_file = File.join(base_dir, ".obfuscation-ignores")
-      mapping_table_file = File.join(base_dir, "obfuscation.txt")
-      used_symbols_file = File.join(base_dir, "obfuscation_used_symbols.txt")
+      ignores_file = File.join(base_dir, '.obfuscation-ignores')
+      mapping_table_file = File.join(base_dir, 'obfuscation.txt')
+      used_symbols_file = File.join(base_dir, 'obfuscation_used_symbols.txt')
       
       unless File.exists? ignores_file then
-        puts "skipping obfuscation report".red + " - #{ignores_file.yellow} is missing"
-        return ""
+        puts 'skipping obfuscation report'.red + " - #{ignores_file.yellow} is missing"
+        return ''
       end
       
       # parse ignores file
@@ -123,7 +123,7 @@ module Badev
       mapping = Hash.new
       mapping_data = File.read(mapping_table_file).split("\n")
       mapping_data.each do |element|
-        parts = element.split(" ")
+        parts = element.split(' ')
         mapping[parts[0]] = parts[1]
       end
       
@@ -166,15 +166,15 @@ module Badev
       res = []
       res << "Detected #{symbols.size} methods in our classes (#{ignored_count} ignored, #{ok_count} ok, #{fixme_count} need fixing and #{partial_count} partial)"
       if (fixme_count>0) then
-        res << ""
+        res << ''
         res << "Non-obfuscated (#{fixme_count}) - need fixing or add them into ignores:"
         symbols.each do |symbol|
           res << "  #{symbol[:translated]}" if symbol[:fixme]
         end
-        res << ""
+        res << ''
       end
       if (partial_count>0) then
-        res << ""
+        res << ''
         res << "Partially obfuscated (#{partial_count}) - need fixing:"
         symbols.each do |symbol|
           res << "  #{symbol[:translated]}" if symbol[:partial]
@@ -188,47 +188,47 @@ module Badev
       return if $dry_run
 
       indent do
-        tmp = File.join(TMP_PAYLOADS_DIR, File.basename(dmg, ".dmg"))
+        tmp = File.join(TMP_PAYLOADS_DIR, File.basename(dmg, '.dmg'))
         sys("rm -rf \"#{tmp}\"") if File.exist? tmp
         sys("mkdir -p \"#{tmp}\"")
 
         res = sys("hdiutil attach \"#{dmg}\" -mountrandom \"#{TMP_PAYLOADS_DIR}\"")
         disk = res.split("\n").select{|l| l.strip=~/\/dev/}.first.split("\t").first.strip
-        volume = ""
+        volume = ''
         res.each_line do |line|
           next unless line =~ /Apple_HFS/
           volume = line.split("\t")[2].strip
           break
         end
 
-        die("bad disk") unless disk =~ /\/dev/
-        die("bad volume") if volume.empty?
+        die('bad disk') unless disk =~ /\/dev/
+        die('bad volume') if volume.empty?
 
         sys("cp -r #{volume}/* \"#{tmp}\"")
 
-        tree1 = ""
+        tree1 = ''
         Dir.chdir(tmp) do
           tree1 = `tree --dirsfirst -apsugif`
         end
 
         pkgs = []
-        Dir.glob(File.join(tmp, "**/*.pkg")) do |pkg|
+        Dir.glob(File.join(tmp, '**/*.pkg')) do |pkg|
           pkgs << generate_payload_for_pkg(options, tmp, pkg)
         end
 
-        obfuscation_report = ""
+        obfuscation_report = ''
         Dir.chdir(options.root) do
           dwarfs_base = read_dwarfs_base_dir()
           if dwarfs_base then
-            name = File.basename(dmg, ".dmg")
-            ver = name.split("-")[1]
+            name = File.basename(dmg, '.dmg')
+            ver = name.split('-')[1]
             obfuscation_report = generate_obfuscation_report(File.join(dwarfs_base, ver))
           end
         end
 
         outdir = File.dirname out
         `mkdir -p #{outdir}` unless File.exist? outdir
-        File.open(out, "w") do |f|
+        File.open(out, 'w') do |f|
           if obfuscation_report.size>0 then
             f << "OBFUSCATION REPORT\n"
             f << "==================\n"
@@ -247,16 +247,16 @@ module Badev
 
         sys("hdiutil detach #{disk}")
         
-        puts "-> ".green + out.blue
+        puts '-> '.green + out.blue
       end
     end
     
     def self.generate_payloads(options)
       puts "generating payloads in #{options.root.blue}"
       Dir.chdir(options.root) do
-        Dir.glob(File.join(options.releases, "*.dmg")).each do |file|
-          name = File.basename(file, ".dmg")
-          dest = File.join(options.payloads, name+".txt")
+        Dir.glob(File.join(options.releases, '*.dmg')).each do |file|
+          name = File.basename(file, '.dmg')
+          dest = File.join(options.payloads, name+'.txt')
           next if not options.force and File.exist? dest
           generate_payload(options, file, dest)
         end

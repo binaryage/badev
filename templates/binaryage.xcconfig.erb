@@ -1,20 +1,20 @@
 // include helper functions
-<%= include("helpers/configurations") %>
+<%= include('helpers/configurations') %>
 
 // prepare shared values
-<%= include("partials/shared_begin") %>
+<%= include('partials/shared_begin') %>
 
 // all projects include common configuration
-<%= include("partials/common") %>
+<%= include('partials/common') %>
 
 // add configuration specific values
-<%= include("partials/debug") if debug_configuration? %>
-<%= include("partials/release") if release_configuration? %>
-<%= include("partials/releaselogging") if releaselogging_configuration? %>
+<%= include('partials/debug') if debug_configuration? %>
+<%= include('partials/release') if release_configuration? %>
+<%= include('partials/releaselogging') if releaselogging_configuration? %>
 
 // product-related configurations
-<%= include("partials/totalfinder/config") %>
-<%= include("partials/totalterminal/config") %>
+<%= include('partials/totalfinder/config') %>
+<%= include('partials/totalterminal/config') %>
 
 // this file must go last to generate shared values
-<%= include("partials/shared_end") %>
+<%= include('partials/shared_end') %>

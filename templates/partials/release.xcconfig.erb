@@ -9,8 +9,8 @@ COPY_PHASE_STRIP = YES
 GCC_OPTIMIZATION_LEVEL = fast
 
 // Preproccessor definitions to apply to each file compiled
-<% $shared["GCC_PREPROCESSOR_DEFINITIONS"] << "NDEBUG=1" %>
-<% $shared["GCC_PREPROCESSOR_DEFINITIONS"] << "NS_BLOCK_ASSERTIONS=1" %>
+<% $shared['GCC_PREPROCESSOR_DEFINITIONS'] << 'NDEBUG=1' %>
+<% $shared['GCC_PREPROCESSOR_DEFINITIONS'] << 'NS_BLOCK_ASSERTIONS=1' %>
 
 // Whether to enable link-time optimizations (such as inlining across translation units)
 LLVM_LTO = YES
@@ -22,4 +22,4 @@ ONLY_ACTIVE_ARCH = NO
 STRIP_INSTALLED_PRODUCT = YES
 
 // a lot of debug statements might go away and we don't want warnings generated from them in release builds
-<% $shared["WARNING_CFLAGS"] << "-Wno-unused-variable" %>
+<% $shared['WARNING_CFLAGS'] << '-Wno-unused-variable' %>

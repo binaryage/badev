@@ -1,14 +1,14 @@
-require "bundler/gem_tasks"
+require 'bundler/gem_tasks'
 
-desc "update readme with latest help"
+desc 'update readme with latest help'
 task :update_readme do
   help = `bin/badev --help`
   indented_help = "\n"
   help.each_line do |line|
-    indented_help << "  " + line
+    indented_help << '  ' + line
   end
   
-  readme = File.read("README.md")
+  readme = File.read('README.md')
   
   new_readme = []
   removing = false
@@ -21,7 +21,7 @@ task :update_readme do
     end
   end
   
-  File.write("README.md", new_readme.join())
-  puts "README.md updated"
+  File.write('README.md', new_readme.join())
+  puts 'README.md updated'
 end
 

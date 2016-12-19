@@ -3,23 +3,23 @@ require 'colored'
 require 'fileutils'
 require 'pathname'
 
-require "badev"
-require "badev/utils/helpers"
+require 'badev'
+require 'badev/utils/helpers'
 
-require "badev/commands/xcconfig"
-require "badev/commands/retagging"
-require "badev/commands/pushtags"
-require "badev/commands/osax"
-require "badev/commands/totalfinder"
-require "badev/commands/totalterminal"
-require "badev/commands/beautification"
-require "badev/commands/payloads"
-require "badev/commands/archiving"
+require 'badev/commands/xcconfig'
+require 'badev/commands/retagging'
+require 'badev/commands/pushtags'
+require 'badev/commands/osax'
+require 'badev/commands/totalfinder'
+require 'badev/commands/totalterminal'
+require 'badev/commands/beautification'
+require 'badev/commands/payloads'
+require 'badev/commands/archiving'
 
 class Badev::CLI
 
   def self.start(*args)
-    $indent = ""
+    $indent = ''
     program :name, 'badev'
     program :version, Badev::VERSION
     program :description, 'A helper tool for development in BinaryAge'
@@ -38,10 +38,10 @@ class Badev::CLI
       c.option '--no-dwarfs', 'Do not include DWARFs'
       c.action do |args, options|
         options.default :root => Dir.pwd
-        options.default :archive => File.expand_path(File.join(options.root, "..", File.basename(options.root)+"-archive"))
-        options.default :releases => "releases"
-        options.default :payloads => "payloads"
-        options.default :otable => "obfuscation.txt"
+        options.default :archive => File.expand_path(File.join(options.root, '..', File.basename(options.root)+'-archive'))
+        options.default :releases => 'releases'
+        options.default :payloads => 'payloads'
+        options.default :otable => 'obfuscation.txt'
         Badev::Archiving::archive(options)
       end
     end
@@ -53,7 +53,7 @@ class Badev::CLI
       c.option '--archive PATH', String, 'Specify a path for archive'
       c.action do |args, options|
         options.default :root => Dir.pwd
-        options.default :archive => File.expand_path(File.join(options.root, "..", File.basename(options.root)+"-archive"))
+        options.default :archive => File.expand_path(File.join(options.root, '..', File.basename(options.root)+'-archive'))
         Badev::Archiving::push_archive(options)
       end
     end
@@ -67,8 +67,8 @@ class Badev::CLI
       c.option '--force', 'Force regeneration'
       c.action do |args, options|
         options.default :root => Dir.pwd
-        options.default :releases => "releases"
-        options.default :payloads => "payloads"
+        options.default :releases => 'releases'
+        options.default :payloads => 'payloads'
         Badev::Payloads::generate_payloads(options)
       end
     end
@@ -81,8 +81,8 @@ class Badev::CLI
       c.option '--differ PATH', String, 'Specify a diff program to use'
       c.action do |args, options|
         options.default :root => Dir.pwd
-        options.default :differ => "ksdiff"
-        options.default :payloads => "payloads"
+        options.default :differ => 'ksdiff'
+        options.default :payloads => 'payloads'
         Badev::Payloads::payload_diff(options)
       end
     end
@@ -95,7 +95,7 @@ class Badev::CLI
       c.option '--group GROUP', String, 'Specify group path to add xcconfigs (ignored unless --add used)'
       c.action do |args, options|
         options.default :root => Dir.pwd
-        options.default :group => "Configs"
+        options.default :group => 'Configs'
         Badev::XCConfig::init_configs_in_tree(args, options)
       end
     end
@@ -119,8 +119,8 @@ class Badev::CLI
       c.option '--prefix PREFIX', String, 'Specify prefix'
       c.action do |args, options|
         options.default :root => Dir.pwd
-        retag_file = File.join(options.root, ".retag")
-        retag_prefix = ""
+        retag_file = File.join(options.root, '.retag')
+        retag_prefix = ''
         retag_prefix = File.read(retag_file).strip if File.exists?(retag_file)
         options.default :prefix => retag_prefix
         Badev::Retagging::retag(options)

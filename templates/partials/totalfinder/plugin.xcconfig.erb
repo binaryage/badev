@@ -7,10 +7,10 @@ GCC_PREFIX_HEADER = <%= @target %>Plugin.pch
 INFOPLIST_FILE = Info.plist
 
 <% # Tabs plugin needs extra seach path to chromium sources
-$shared["USER_HEADER_SEARCH_PATHS"] << "$(SRCROOT)/chromium" if @project=="Tabs"
+$shared['USER_HEADER_SEARCH_PATHS'] << '$(SRCROOT)/chromium' if @project=='Tabs'
 %>
 
 // temporary workaround for too many warnings in chromium sources
-<% if @project=="Tabs" then %>
+<% if @project=='Tabs' then %>
 GCC_WARN_64_TO_32_BIT_CONVERSION = NO
 <% end %>

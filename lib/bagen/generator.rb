@@ -1,4 +1,4 @@
-require "pathname"
+require 'pathname'
 require 'xcodeproj'
 require 'pp'
 require 'fileutils'
@@ -22,7 +22,7 @@ module Bagen
       end
 
       def include(template_path)
-        template_path += ".xcconfig.erb" unless template_path =~ /xcconfig\.erb$/
+        template_path += '.xcconfig.erb' unless template_path =~ /xcconfig\.erb$/
         template = ERB.new File.read(template_path)
         Dir.chdir File.dirname(template_path) do
           template.result(get_binding)
@@ -38,13 +38,13 @@ module Bagen
 
     def self.templates_dir
       self_path = Pathname.new(__FILE__).realpath
-      File.expand_path("../../../templates", self_path)
+      File.expand_path('../../../templates', self_path)
     end
 
     def self.generate(args, options)
       template = args[0]
       output = options.output
-      template_path = File.join(templates_dir(), template + ".xcconfig.erb")
+      template_path = File.join(templates_dir(), template + '.xcconfig.erb')
       die "required template does not exists at #{template_path.yellow}" unless File.exists? template_path
 
       header = <<-XEND.gsub(/^ {6}/, '')
@@ -73,7 +73,7 @@ module Bagen
       contents = header+lines.join("\n")
       
       if output
-        File.open(output, "w") { |file| file.write(contents) }
+        File.open(output, 'w') { |file| file.write(contents) }
       else
         puts contents
       end
