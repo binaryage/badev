@@ -7,7 +7,7 @@ require 'bagen/generator'
 
 class Bagen::CLI
 
-  def self.start(*args)
+  def self.start(*_args)
     program :name, 'bagen'
     program :version, Bagen::VERSION
     program :description, 'A generator of xcconfig files for BinaryAge projects'
@@ -27,4 +27,3 @@ class Bagen::CLI
   end
 
 end
-

@@ -5,7 +5,7 @@ module Bagen
 
     def sys(cmd)
       puts ">#{cmd.yellow}"
-      unless system(cmd) then
+      unless system(cmd)
         puts 'failed'.red
         exit 1
       end

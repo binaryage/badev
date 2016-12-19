@@ -11,61 +11,61 @@ module Badev
     KILL_FINDER_CMD = 'killall Finder'
     LAUNCH_FINDER_CMD = 'open Finder'
 
-    REMOVE_DEV_TOTALFINDER_OSAX_CMD = 'rm -rf ~/Library/ScriptingAdditions/TotalFinder.osax'
-    REMOVE_DEV_TOTALFINDER_APP_CMD = 'rm -rf ~/Applications/TotalFinder.app'
+    REMOVE_DEV_OSAX_CMD = 'rm -rf ~/Library/ScriptingAdditions/TotalFinder.osax'
+    REMOVE_DEV_APP_CMD = 'rm -rf ~/Applications/TotalFinder.app'
 
-    REMOVE_RETAIL_TOTALFINDER_OSAX_CMD = 'sudo rm -rf /Library/ScriptingAdditions/TotalFinder.osax'
-    REMOVE_RETAIL_TOTALFINDER_APP_CMD = 'sudo rm -rf /Applications/TotalFinder.app'
+    REMOVE_REL_OSAX_CMD = 'sudo rm -rf /Library/ScriptingAdditions/TotalFinder.osax'
+    REMOVE_REL_APP_CMD = 'sudo rm -rf /Applications/TotalFinder.app'
 
-    def self.launch_finder(options)
+    def self.launch_finder(_options)
       sys(ACTIVATE_FINDER_CMD)
     end
 
-    def self.quit_finder(options)
+    def self.quit_finder(_options)
       sys(QUIT_FINDER_CMD)
     end
 
-    def self.kill_finder(options)
+    def self.kill_finder(_options)
       sys(KILL_FINDER_CMD)
     end
 
-    def self.restart_finder(options)
+    def self.restart_finder(_options)
       sys(QUIT_FINDER_CMD)
       sys('sleep 1')
       sys(LAUNCH_FINDER_CMD)
     end
 
-    def self.quit_totalfinder(options)
+    def self.quit_totalfinder(_options)
       sys(QUIT_FINDER_CMD)
       sys(QUIT_TOTALFINDER_CMD)
     end
 
-    def self.restart_totalfinder(options)
+    def self.restart_totalfinder(_options)
       sys(QUIT_FINDER_CMD)
       sys('sleep 1')
       sys(INJECT_TOTALFINDER_CMD)
     end
 
-    def self.inject_totalfinder(options)
+    def self.inject_totalfinder(_options)
       sys(INJECT_TOTALFINDER_CMD)
     end
 
-    def self.open_totalfinder(options)
+    def self.open_totalfinder(_options)
       sys(OPEN_TOTALFINDER_CMD)
     end
 
-    def self.crash_totalfinder(options)
+    def self.crash_totalfinder(_options)
       sys(CRASH_TOTALFINDER_CMD)
     end
 
-    def self.remove_dev(options)
-      sys(REMOVE_DEV_TOTALFINDER_OSAX_CMD)
-      sys(REMOVE_DEV_TOTALFINDER_APP_CMD)
+    def self.remove_dev(_options)
+      sys(REMOVE_DEV_OSAX_CMD)
+      sys(REMOVE_DEV_APP_CMD)
     end
 
-    def self.remove_retail(options)
-      sys(REMOVE_RETAIL_TOTALFINDER_OSAX_CMD)
-      sys(REMOVE_RETAIL_TOTALFINDER_APP_CMD)
+    def self.remove_retail(_options)
+      sys(REMOVE_REL_OSAX_CMD)
+      sys(REMOVE_REL_APP_CMD)
     end
 
   end

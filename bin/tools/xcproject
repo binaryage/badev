@@ -12,7 +12,7 @@ XCPROJECT_PATH = File.join(BASE_DIR, '_xcproject')
 XCODE_DEV_PATH = Pathname.new(`xcode-select -p`.strip)
 XCODE_CONTENTS_PATH = XCODE_DEV_PATH.dirname
 XCODE_PATH = XCODE_CONTENTS_PATH.dirname
-SUB_RPATHS = ['Frameworks', 'OtherFrameworks', 'SharedFrameworks']
+SUB_RPATHS = %w(Frameworks OtherFrameworks SharedFrameworks)
 
 def has_rpath(rpath, rpaths)
   rpaths.each do |path|

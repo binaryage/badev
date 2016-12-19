@@ -39,7 +39,7 @@ module Badev
       xcodeprojs = []
 
       dirs.each do |base|
-        if File.exists? base then
+        if File.exists? base
           Dir.glob(File.join(base, '**/*.xcodeproj')) do |dir|
             xcodeprojs << File.expand_path(dir)
           end
@@ -51,7 +51,7 @@ module Badev
 
     def self.make_xcconfig_line(key, value)
       v = value
-      if value.kind_of?(Array) then
+      if value.kind_of?(Array)
         v = value.join(' ')
       end
 
@@ -64,7 +64,7 @@ module Badev
       //
       // this file should be set as #{configuration} configuration for target #{target} in #{project}.xcodeproj
       XEND
-      
+
       if original_xcconfig.length > 0
         template << <<-XEND.gsub(/^ {8}/, '')
         
@@ -98,11 +98,11 @@ module Badev
       return xcconfig if xcconfig.to_s =~ /_generated\.xcconfig$/
       xcconfig.dirname.join("#{xcconfig.basename(xcconfig.extname)}_generated.xcconfig").to_s
     end
-    
+
     def self.original_xcconfig_path(target, configuration)
       `#{XCPROJECT} list -x -p #{shellescape(target.project.path)} -t #{shellescape(target.name)} -c #{shellescape(configuration.name)}`.strip
     end
-    
+
     def self.original_xcconfig_include_path(current, xcconfig)
       return '' if current.empty? or xcconfig == current
       Pathname.new(current).relative_path_from(Pathname.new(xcconfig).dirname).to_s
@@ -128,15 +128,15 @@ module Badev
           filename = File.join(dest, "#{basename}_#{conf.name}_#{target.name}.xcconfig")
           destname = (File.basename filename, '.xcconfig') + '_generated.xcconfig'
           original_xcconfig = original_xcconfig_path(target, conf)
-          unless File.exists? filename
+          if File.exists? filename
+            puts "#{filename.blue} already exists => skipping"
+          else
             content = build_default_xcconfig(destname, basename, conf.name, target.name, [configuration_settings, target_settings], original_xcconfig_include_path(original_xcconfig, filename))
             File.open(filename, 'w') { |file| file.write(content) }
             relpath = './'+Pathname.new(filename).relative_path_from(Pathname.pwd).to_s
             puts "generated: #{relpath.yellow}"
-          else
-            puts "#{filename.blue} already exists => skipping"
           end
-          
+
           if options.add and File.exists? filename
             unless original_xcconfig == filename
               sys("#{XCPROJECT} set-config -a -f -p #{shellescape(proj.path)} -t #{shellescape(target.name)} -c #{shellescape(conf.name)} -g #{shellescape(options.group)} #{shellescape(filename)}")
@@ -151,7 +151,7 @@ module Badev
       return unless lines[0] =~ /\/\/!/
       i = lines[0].rindex('>')
       return unless i
-      lines[0] = lines[0].slice(0,i).rstrip
+      lines[0] = lines[0].slice(0, i).rstrip
       content = lines.join("\n")
       File.open(path, 'w') { |file| file.write(content) }
     end
@@ -162,10 +162,10 @@ module Badev
       convert_generator(path)
       lines = File.read(path).split("\n")
       return unless lines[0] =~ /\/\/!(.*)/
-      generator = $1.strip
+      $1.strip
     end
 
-    def self.init_configs_in_tree(args, options)
+    def self.init_configs_in_tree(_args, options)
       xcodeprojs = collect_xcodeprojs([options.root])
 
       xcodeprojs.each do |xcodeproj|

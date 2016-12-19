@@ -44,7 +44,7 @@ module Bagen
     def self.generate(args, options)
       template = args[0]
       output = options.output
-      template_path = File.join(templates_dir(), template + '.xcconfig.erb')
+      template_path = File.join(templates_dir, template + '.xcconfig.erb')
       die "required template does not exists at #{template_path.yellow}" unless File.exists? template_path
 
       header = <<-XEND.gsub(/^ {6}/, '')
@@ -71,7 +71,7 @@ module Bagen
       lines.map! { |line| line.gsub(/^\/\/\/(.*)$/, '//\1') } # replace tripple comments with normal comments
 
       contents = header+lines.join("\n")
-      
+
       if output
         File.open(output, 'w') { |file| file.write(contents) }
       else

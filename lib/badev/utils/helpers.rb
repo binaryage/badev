@@ -4,14 +4,14 @@ module Badev
   module Helpers
 
     extend self
-    
+
     def indent(how='  ')
       old_indent = $indent
       $indent += how
       yield()
       $indent = old_indent
     end
-    
+
     def puts(x)
       Kernel.puts $indent+x.to_s
     end
@@ -21,29 +21,29 @@ module Badev
         puts line
       end
     end
-    
+
     def sys(cmd, soft=false, silenced=false)
       marker = '! '
       marker = '? ' if $dry_run
       puts "#{marker.yellow}#{cmd.yellow}"
 
       output = ''
-      unless $dry_run then
+      unless $dry_run
         status = nil
-        output = Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr| 
+        output = Open3.popen3(cmd) do |_stdin, stdout, _stderr, wait_thr|
           status = wait_thr.value
           stdout.read
         end
-        
-        indent do 
+
+        indent do
           print_indented(output) unless silenced
         end
-        
-        if status.exitstatus > 0 then
+
+        if status.exitstatus > 0
           die('failed', status.exitstatus) unless soft
         end
       end
-      
+
       output
     end
 
@@ -55,7 +55,7 @@ module Badev
     def shellescape(str)
       # An empty argument will be skipped, so return empty quotes.
       return "''" if str.nil?
-      str = str.to_s if not str.is_a?(String) && str.respond_to?('to_s', true)
+      str = str.to_s unless str.is_a?(String) && str.respond_to?('to_s', true)
       return "''" if str.empty?
 
       str = str.dup
@@ -69,17 +69,17 @@ module Badev
       # combo is regarded as line continuation and simply ignored.
       str.gsub!(/\n/, "'\n'")
 
-      return str
+      str
     end
 
     def revision
       `git rev-parse HEAD`.strip
     end
-    
+
     def short_revision
       revision[0...7]
     end
-    
+
     def release_version_from_filename(n, ext='.txt')
       # n == /Users/darwin/code/totalfinder/payloads/TotalFinder-0.7.1.txt
       p = File.basename(n, ext).split('-')[1]
@@ -92,15 +92,15 @@ module Badev
       z = (n[2]||'0').to_i
       x*1000000 + y*1000 + z
     end
-    
+
     def read_dwarfs_base_dir
       return File.expand_path(File.read('totalfinder/.dwarfs').strip) if File.exists? 'totalfinder/.dwarfs' # hack for TotalFinder
       unless File.exists? '.dwarfs'
-        puts ".dwarfs file is not present in #{Dir.pwd.blue}".red 
+        puts ".dwarfs file is not present in #{Dir.pwd.blue}".red
         return nil
       end
       File.expand_path(File.read('.dwarfs').strip)
     end
-        
+
   end
 end

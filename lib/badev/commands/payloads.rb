@@ -1,10 +1,10 @@
 module Badev
   module Payloads
     extend Badev::Helpers
-    
+
     TMP_PAYLOADS_DIR = '/tmp/payloads'
-    
-    def self.generate_payload_for_pkg(options, tmp, pkg)
+
+    def self.generate_payload_for_pkg(_options, tmp, pkg)
       tree = ''
       exes = ''
       deps = ''
@@ -20,12 +20,12 @@ module Badev
       Dir.chdir(extractor_dir) do
         sys("mv \"#{name}\" \"__#{name}\"") # this is here to prevent name clash, Asepsis.pkg archive file was extracted into Asepsis.pkg folder
         sys("xar -xf \"__#{name}\"")
-        
-        Dir.glob('*.pkg') do |file|
-          next unless File.directory? file
-          
-          Dir.chdir(file) do
-            if (File.exist? 'Payload') then
+
+        Dir.glob('*.pkg') do |path|
+          next unless File.directory? path
+
+          Dir.chdir(path) do
+            if File.exist? 'Payload'
               sys('mv Payload Payload.gz')
               sys('gunzip Payload.gz')
               sys('cpio -id < Payload')
@@ -39,8 +39,8 @@ module Badev
               binaries << file
             end
 
-            binaries.reject! {|file| File.symlink? file }
-            
+            binaries.reject! { |file| File.symlink? file }
+
             binaries.each do |binary|
               exes += `file "#{binary}"` + "\n"
             end
@@ -61,7 +61,7 @@ module Badev
           end
         end
       end
-      
+
       res = ''
       res << "\n"
       res << "#{name}\n"
@@ -75,7 +75,7 @@ module Badev
       res << symbols
       res
     end
-    
+
     def self.is_symbol_obfuscation_partial?(name)
       name =~ /\[(.*)\]/
       parts = $1.strip.split(' ')
@@ -95,18 +95,18 @@ module Badev
       sel = parts[1]
       sel =~ /\$/
     end
-    
+
     def self.generate_obfuscation_report(dwarf_folder)
       base_dir = File.expand_path(dwarf_folder)
       ignores_file = File.join(base_dir, '.obfuscation-ignores')
       mapping_table_file = File.join(base_dir, 'obfuscation.txt')
       used_symbols_file = File.join(base_dir, 'obfuscation_used_symbols.txt')
-      
-      unless File.exists? ignores_file then
+
+      unless File.exists? ignores_file
         puts 'skipping obfuscation report'.red + " - #{ignores_file.yellow} is missing"
         return ''
       end
-      
+
       # parse ignores file
       ignores_data = File.read(ignores_file).split("\n")
       subexprs = []
@@ -118,7 +118,7 @@ module Badev
         subexprs << Regexp.new(meat)
       end
       ignores_regexps = Regexp.union(subexprs)
-      
+
       # parse mapping table
       mapping = Hash.new
       mapping_data = File.read(mapping_table_file).split("\n")
@@ -126,7 +126,7 @@ module Badev
         parts = element.split(' ')
         mapping[parts[0]] = parts[1]
       end
-      
+
       # process used_symbols_file
       symbols = []
       symbols_data = File.read(used_symbols_file).split("\n")
@@ -139,33 +139,33 @@ module Badev
           key
         end
         s[:ignored] = s[:translated] =~ ignores_regexps
-        unless s[:ignored] then
+        unless s[:ignored]
           s[:partial] = is_symbol_obfuscation_partial?(s[:raw])
-          unless s[:partial] then
+          unless s[:partial]
             s[:fixme] = !is_symbol_obfuscated?(s[:raw])
-            unless s[:fixme] then
+            unless s[:fixme]
               s[:ok] = true
             end
           end
         end
         symbols << s
       end
-      
+
       ignored_count = 0
       partial_count = 0
       ok_count = 0
       fixme_count = 0
-      
+
       symbols.each do |symbol|
         ignored_count = ignored_count+1 if symbol[:ignored]
         partial_count = partial_count+1 if symbol[:partial]
         ok_count = ok_count+1 if symbol[:ok]
         fixme_count = fixme_count+1 if symbol[:fixme]
       end
-      
+
       res = []
       res << "Detected #{symbols.size} methods in our classes (#{ignored_count} ignored, #{ok_count} ok, #{fixme_count} need fixing and #{partial_count} partial)"
-      if (fixme_count>0) then
+      if fixme_count>0
         res << ''
         res << "Non-obfuscated (#{fixme_count}) - need fixing or add them into ignores:"
         symbols.each do |symbol|
@@ -173,7 +173,7 @@ module Badev
         end
         res << ''
       end
-      if (partial_count>0) then
+      if partial_count>0
         res << ''
         res << "Partially obfuscated (#{partial_count}) - need fixing:"
         symbols.each do |symbol|
@@ -193,7 +193,7 @@ module Badev
         sys("mkdir -p \"#{tmp}\"")
 
         res = sys("hdiutil attach \"#{dmg}\" -mountrandom \"#{TMP_PAYLOADS_DIR}\"")
-        disk = res.split("\n").select{|l| l.strip=~/\/dev/}.first.split("\t").first.strip
+        disk = res.split("\n").select { |l| l.strip=~/\/dev/ }.first.split("\t").first.strip
         volume = ''
         res.each_line do |line|
           next unless line =~ /Apple_HFS/
@@ -218,8 +218,8 @@ module Badev
 
         obfuscation_report = ''
         Dir.chdir(options.root) do
-          dwarfs_base = read_dwarfs_base_dir()
-          if dwarfs_base then
+          dwarfs_base = read_dwarfs_base_dir
+          if dwarfs_base
             name = File.basename(dmg, '.dmg')
             ver = name.split('-')[1]
             obfuscation_report = generate_obfuscation_report(File.join(dwarfs_base, ver))
@@ -229,13 +229,13 @@ module Badev
         outdir = File.dirname out
         `mkdir -p #{outdir}` unless File.exist? outdir
         File.open(out, 'w') do |f|
-          if obfuscation_report.size>0 then
+          if obfuscation_report.size>0
             f << "OBFUSCATION REPORT\n"
             f << "==================\n"
             f << obfuscation_report
             f << "\n\n"
           end
-          
+
           f << "BASIC DMG LAYOUT\n"
           f << "================\n"
           f << tree1
@@ -246,11 +246,11 @@ module Badev
         end
 
         sys("hdiutil detach #{disk}")
-        
+
         puts '-> '.green + out.blue
       end
     end
-    
+
     def self.generate_payloads(options)
       puts "generating payloads in #{options.root.blue}"
       Dir.chdir(options.root) do
@@ -262,7 +262,7 @@ module Badev
         end
       end
     end
-    
+
     def self.payload_diff(options)
       puts "diff-ing payloads in #{options.root.blue}"
       indent do

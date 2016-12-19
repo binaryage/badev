@@ -2,25 +2,23 @@ module Badev
   module Retagging
 
     extend Badev::Helpers
-    
+
     def self.prefix_tag(prefix, tag)
       "#{prefix}#{tag}"
     end
-    
+
     def self.walk_submodules(dir, prefixed_tag, sha, level)
       Dir.chdir dir do
         indent do
           puts "in #{dir.blue}"
 
           indent do
-            unless sha then
-              puts "unknown sha (the submodule wasn't present in this revision) => skipping".red
-            else
-              if level>0 then
+            if sha
+              if level>0
                 tag_exists = !(`git tag | grep #{prefixed_tag}`.strip.empty?)
-                if tag_exists and not $options.force then
+                if tag_exists and not $options.force
                   existing_sha = `git rev-list -1 '#{prefixed_tag}'`.strip
-                  if existing_sha != sha then
+                  if existing_sha != sha
                     puts "the tag '#{prefixed_tag}' already exists and differs => skipping (use --force to overwrite it)".red
                   else
                     puts "the tag '#{prefixed_tag}' already exists and matches => nothing to do".green
@@ -30,9 +28,11 @@ module Badev
                   sys("git tag -a '#{prefixed_tag}' #{sha} -m \"retagged from parent repo\"", true)
                 end
               end
+            else
+              puts "unknown sha (the submodule wasn't present in this revision) => skipping".red
             end
           end
-      
+
           submodules = []
           submodules = `grep path .gitmodules | sed 's/.*= //'`.split "\n" if File.exists? '.gitmodules'
           submodules.each do |path|
@@ -52,7 +52,7 @@ module Badev
 
       indent do
         Dir.chdir $options.root do
-          if $options.all then
+          if $options.all
             tags = `git tag`.strip.split "\n" # gives me all tags
           else
             tags = [`git describe --tags --abbrev=0`.strip] # gives me the last tag on current branch

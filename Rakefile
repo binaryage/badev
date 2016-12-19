@@ -7,21 +7,21 @@ task :update_readme do
   help.each_line do |line|
     indented_help << '  ' + line
   end
-  
+
   readme = File.read('README.md')
-  
+
   new_readme = []
   removing = false
   readme.each_line do |line|
     removing = false if line =~ /## /
     new_readme << line unless removing
-    if line =~ /## usage/ then
+    if line =~ /## usage/
       removing = true
       new_readme << indented_help
     end
   end
-  
-  File.write('README.md', new_readme.join())
+
+  File.write('README.md', new_readme.join)
   puts 'README.md updated'
 end
 
