@@ -11,7 +11,7 @@ module Badev
     KILL_FINDER_CMD = 'killall Finder'
     LAUNCH_FINDER_CMD = 'open Finder'
 
-    REMOVE_DEV_OSAX_CMD = 'rm -rf ~/Library/ScriptingAdditions/TotalFinder.osax'
+    REMOVE_DEV_OSAX_CMD = 'rm -rf ~/Library/ScriptingAdditions/TotalFinder*.osax'
     REMOVE_DEV_APP_CMD = 'rm -rf ~/Applications/TotalFinder.app'
 
     REMOVE_REL_OSAX_CMD = 'sudo rm -rf /Library/ScriptingAdditions/TotalFinder.osax'
