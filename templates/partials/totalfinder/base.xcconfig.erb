@@ -39,9 +39,7 @@ DEBUG_INFORMATION_FORMAT = dwarf-with-dsym
 
 INFOPLIST_FILE = <%= @target %>-Info.plist
 
-GCC_PRECOMPILE_PREFIX_HEADER = NO
 GCC_PREFIX_HEADER = <%= @target %>-Prefix.pch
-GCC_INCREASE_PRECOMPILED_HEADER_SHARING = NO
 
 <% $shared['WARNING_CFLAGS'] << '-Wthread-safety' << '-Wthread-safety-beta' %>
 <% $shared['OTHER_LDFLAGS'] << '-undefined dynamic_lookup' << '-headerpad_max_install_names' %>
