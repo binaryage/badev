@@ -61,7 +61,7 @@ end
 <%= include('osax') if is_osax? %>
 
 // here I use a small shortcut, TotalKit and all plugins are on same directory level relative to headers folder
-<% $shared['HEADER_SEARCH_PATHS'] << '$(SRCROOT)/../../headers' if needs_finder_headers? %>
+<% $shared['HEADER_SEARCH_PATHS'] << "#{totalfinder_path}/headers" if needs_finder_headers? %>
 
 <% unless is_totalfinder_framework? then %>
 // we want to treat all symbols as private in non-libraries

@@ -2,15 +2,23 @@
 /// Specific configuration for TotalFinder plugins
 ///
 
-// plugins have different conventions for plist and pch files
-GCC_PREFIX_HEADER = <%= @target %>Plugin.pch
 INFOPLIST_FILE = Info.plist
 
-<% # Tabs plugin needs extra seach path to chromium sources
-$shared['USER_HEADER_SEARCH_PATHS'] << '$(SRCROOT)/chromium' if @project=='Tabs'
+// we want to share plugins precompiled headers
+GCC_PREFIX_HEADER = /Users/darwin/root/totalfinder/plugins/_shared/Plugin.pch
+GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES
+PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO
+// modules interfere with  GCC_INCREASE_PRECOMPILED_HEADER_SHARING
+CLANG_ENABLE_MODULES = NO
+CLANG_ENABLE_MODULE_DEBUGGING = NO
+
+<%
+  if @project=='Tabs'
+    $shared['USER_HEADER_SEARCH_PATHS'] << '$(SRCROOT)' << '$(SRCROOT)/chromium' << '$(SRCROOT)/Helpers'
+  end
 %>
 
 // temporary workaround for too many warnings in chromium sources
 <% if @project=='Tabs' then %>
-GCC_WARN_64_TO_32_BIT_CONVERSION = NO
+  GCC_WARN_64_TO_32_BIT_CONVERSION = NO
 <% end %>
