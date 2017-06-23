@@ -1,69 +1,76 @@
 // totalfinder-specific logic
 <%
-
-$plugins = %w(ColorfulSidebar CopyPathMenu DockProgressBar FoldersOnTop PublishBox Tabs TerminalLink Visor ColumnViewAutoWidth CutAndPaste FileBrowsing NoDesktopDots SystemFiles Template Labels Tests)
-$frameworks = %w(BAKit TotalKit Sparkle)
-$helpers = %w(Shell OSAX Agent Uninstaller CrashWatcher)
-
-def is_totalfinder_plugin?
-  $plugins.include? @project and $plugins.include? @target
-end
-
-def is_totalfinder_framework?
-  $frameworks.include? @project and $frameworks.include? @target
-end
-
-def is_totalfinder_helper?
-  $helpers.include? @project
-end
-
-def is_totalfinder?
-  return true if $frameworks.include? @project
-  return true if $plugins.include? @project
-  return true if is_totalfinder_helper?
-  return false
-end
-
-def needs_finder_headers?
-  return true if @target=="TotalKit"
-  $plugins.include? @target
-end
-
-def is_totalfinder_shell?
-  @target=="TotalFinder.bundle" and @project=="Shell"
-end
-
-def is_bundle?
-  return true if is_totalfinder_plugin?
-  return true if is_totalfinder_shell?
-end
-
-def is_app?
-  ["Uninstaller", "Agent", "CrashWatcher"].include? @target
-end
-
-def is_osax?
-  @project=="OSAX" and @target == "TotalFinder"
-end
-
+  def in_totalfinder_path?
+    @project_dir.to_s.start_with? File.expand_path(totalfinder_path).to_s
+  end
 %>
 
-<%= include('base') if is_totalfinder? %>
-<%= include('debug') if is_totalfinder? and debug_configuration? %>
-<%= include('release') if is_totalfinder? and release_configuration? %>
-<%= include('plugin') if is_totalfinder_plugin? %>
-<%= include('framework') if is_totalfinder_framework? %>
-<%= include('shell') if is_totalfinder_shell? %>
-<%= include('agent') if @target=='Agent' %>
-<%= include('uninstaller') if @target=='Uninstaller' %>
-<%= include('app') if is_app? %>
-<%= include('bundle') if is_bundle? %>
-<%= include('osax') if is_osax? %>
+<% if in_totalfinder_path? %>
+  <%
+    $plugins = %w(ColorfulSidebar CopyPathMenu DockProgressBar FoldersOnTop PublishBox Tabs TerminalLink Visor ColumnViewAutoWidth CutAndPaste FileBrowsing NoDesktopDots SystemFiles Template Labels Tests)
+    $frameworks = %w(BAKit TotalKit Sparkle)
+    $helpers = %w(Shell OSAX SIPOSAX Agent Uninstaller CrashWatcher)
 
-// here I use a small shortcut, TotalKit and all plugins are on same directory level relative to headers folder
-<% $shared['HEADER_SEARCH_PATHS'] << "#{totalfinder_path}/headers" if needs_finder_headers? %>
+    def is_totalfinder_plugin?
+      $plugins.include? @project and $plugins.include? @target
+    end
 
-<% unless is_totalfinder_framework? then %>
-// we want to treat all symbols as private in non-libraries
-GCC_SYMBOLS_PRIVATE_EXTERN = YES
+    def is_totalfinder_framework?
+      $frameworks.include? @project and $frameworks.include? @target
+    end
+
+    def is_totalfinder_helper?
+      $helpers.include? @project
+    end
+
+    def is_totalfinder?
+      return true if $frameworks.include? @project
+      return true if $plugins.include? @project
+      return true if is_totalfinder_helper?
+      return false
+    end
+
+    def needs_finder_headers?
+      return true if @target=="TotalKit"
+      $plugins.include? @target
+    end
+
+    def is_totalfinder_shell?
+      @target=="TotalFinder.bundle" and @project=="Shell"
+    end
+
+    def is_bundle?
+      return true if is_totalfinder_plugin?
+      return true if is_totalfinder_shell?
+    end
+
+    def is_app?
+      ["Uninstaller", "Agent", "CrashWatcher"].include? @target
+    end
+
+    def is_osax?
+      (@project=="OSAX" or @project=="SIPOSAX") and @target == "TotalFinder"
+    end
+
+  %>
+
+  <%= include('base') if is_totalfinder? %>
+  <%= include('debug') if is_totalfinder? and debug_configuration? %>
+  <%= include('release') if is_totalfinder? and release_configuration? %>
+  <%= include('plugin') if is_totalfinder_plugin? %>
+  <%= include('framework') if is_totalfinder_framework? %>
+  <%= include('shell') if is_totalfinder_shell? %>
+  <%= include('agent') if @target=='Agent' %>
+  <%= include('uninstaller') if @target=='Uninstaller' %>
+  <%= include('app') if is_app? %>
+  <%= include('bundle') if is_bundle? %>
+  <%= include('osax') if is_osax? %>
+
+  // here I use a small shortcut, TotalKit and all plugins are on same directory level relative to headers folder
+  <% $shared['HEADER_SEARCH_PATHS'] << "#{totalfinder_path}/headers" if needs_finder_headers? %>
+
+  <% unless is_totalfinder_framework? then %>
+    // we want to treat all symbols as private in non-libraries
+    GCC_SYMBOLS_PRIVATE_EXTERN = YES
+  <% end %>
 <% end %>

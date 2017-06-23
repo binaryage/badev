@@ -1,34 +1,40 @@
 // totalterminal-specific logic
 <%
-
-$helpers = %w(TotalTerminal OSAX)
-
-def is_totalterminal_helper?
-  $helpers.include? @project
-end
-
-def is_totalterminal?
-  return true if is_totalfinder_helper?
-  return false
-end
-
-def is_totalterminal_shell?
-  @target=="TotalTerminal.bundle" and @project=="TotalTerminal"
-end
-
-def is_bundle?
-  return true if is_totalterminal_shell?
-end
-
-def is_osax?
-  @project=="OSAX" and @target == "TotalTerminal"
-end
-
+  def in_totalterminal_path?
+    @project_dir.to_s.start_with? File.expand_path(totalterminal_path).to_s
+  end
 %>
 
-<%= include('base') if is_totalterminal? %>
-<%= include('debug') if is_totalterminal? and debug_configuration? %>
-<%= include('release') if is_totalterminal? and release_configuration? %>
-<%= include('shell') if is_totalterminal_shell? %>
-<%= include('bundle') if is_bundle? %>
-<%= include('osax') if is_osax? %>
+<% if in_totalterminal_path? %>
+  <%
+    $helpers = %w(TotalTerminal OSAX)
+
+    def is_totalterminal_helper?
+      $helpers.include? @project
+    end
+
+    def is_totalterminal?
+      return true if is_totalfinder_helper?
+      return false
+    end
+
+    def is_totalterminal_shell?
+      @target=="TotalTerminal.bundle" and @project=="TotalTerminal"
+    end
+
+    def is_bundle?
+      return true if is_totalterminal_shell?
+    end
+
+    def is_osax?
+      @project=="OSAX" and @target == "TotalTerminal"
+    end
+  %>
+
+  <%= include('base') if is_totalterminal? %>
+  <%= include('debug') if is_totalterminal? and debug_configuration? %>
+  <%= include('release') if is_totalterminal? and release_configuration? %>
+  <%= include('shell') if is_totalterminal_shell? %>
+  <%= include('bundle') if is_bundle? %>
+  <%= include('osax') if is_osax? %>
+<% end %>
