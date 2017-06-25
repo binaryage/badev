@@ -22,8 +22,12 @@
       @target=="TotalFinder" and @project=="Shell"
     end
 
+    def totalkit?
+      @target=="TotalKit"
+    end
+
     def needs_finder_headers?
-      @target=="TotalKit" or shell? or plugin?
+      totalkit? or shell? or plugin?
     end
 
     def bundle?
@@ -38,6 +42,14 @@
       (@project=="OSAX" and @target == "TotalFinder") or (@project=="SIPOSAX" and @target == "TotalFinderSIP")
     end
 
+    def agent?
+      @target=='Agent'
+    end
+
+    def uninstaller?
+      @target=='Uninstaller'
+    end
+
   %>
 
   <%= include('base') %>
@@ -45,8 +57,8 @@
   <%= include('release') if release_configuration? %>
   <%= include('plugin') if plugin? %>
   <%= include('framework') if framework? %>
-  <%= include('agent') if @target=='Agent' %>
-  <%= include('uninstaller') if @target=='Uninstaller' %>
+  <%= include('agent') if agent? %>
+  <%= include('uninstaller') if uninstaller? %>
   <%= include('app') if app? %>
   <%= include('bundle') if bundle? %>
   <%= include('osax') if osax? %>
