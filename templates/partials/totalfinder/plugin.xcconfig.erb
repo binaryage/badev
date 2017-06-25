@@ -2,8 +2,6 @@
 /// Specific configuration for TotalFinder plugins
 ///
 
-INFOPLIST_FILE = Info.plist
-
 // we want to share plugins precompiled headers
 GCC_PREFIX_HEADER = <%= "#{totalfinder_path}/pchs/Plugin.pch" %>
 GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES
