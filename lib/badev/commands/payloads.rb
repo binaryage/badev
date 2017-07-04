@@ -193,13 +193,16 @@ module Badev
         sys("mkdir -p \"#{tmp}\"")
 
         res = sys("hdiutil attach \"#{dmg}\" -mountrandom \"#{TMP_PAYLOADS_DIR}\"")
+        disks = res.split("\n").select { |l| l.strip.match?(/^\/dev/) }
+        disk = disks.first.split("\t").first.strip
         volume = ''
         res.each_line do |line|
-          next unless line =~ /Apple_HFS/
+          next unless line.include?(TMP_PAYLOADS_DIR)
           volume = line.split("\t")[2].strip
           break
         end
 
+        die('bad disk') unless disk =~ /^\/dev/
         die('bad volume') if volume.empty?
 
         sys("cp -r #{volume}/* \"#{tmp}\"")
