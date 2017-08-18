@@ -80,11 +80,11 @@ module Badev
       name =~ /\[(.*)\]/
       parts = $1.strip.split(' ')
       sel = parts[1]
-      return false unless sel =~ /\$/
+      return false unless sel =~ /^TF\$/
       chunks = sel.split(':')
       chunks.each do |chunk|
         next unless chunk.size>0
-        return true if chunk[0] != '$'
+        return true unless chunk =~ /^TF\$/
       end
       return false
     end
@@ -93,7 +93,7 @@ module Badev
       name =~ /\[(.*)\]/
       parts = $1.strip.split(' ')
       sel = parts[1]
-      sel =~ /\$/
+      sel =~ /TF\$/
     end
 
     def self.generate_obfuscation_report(dwarf_folder)
@@ -133,7 +133,7 @@ module Badev
       symbols_data.each do |symbol|
         s = Hash.new
         s[:raw] = symbol
-        s[:translated] = symbol.gsub(/(\$[a-zA-Z0-9_]+)/) do
+        s[:translated] = symbol.gsub(/(TF\$[a-zA-Z0-9_]+)/) do
           key = mapping[$1]
           die("unable to translate symbol '#{$1}'") unless key
           key
