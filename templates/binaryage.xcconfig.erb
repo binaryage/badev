@@ -1,6 +1,5 @@
 // include helper functions
 <%= include('helpers/configurations') %>
-<%= include('helpers/paths') %>
 
 // prepare shared values
 <%= include('partials/shared_begin') %>
@@ -14,7 +13,7 @@
 <%= include('partials/releaselogging') if releaselogging_configuration? %>
 
 // product-related configurations
-<%= include('partials/totalfinder/config') %>
+<%= include('partials/totalfinder/config') if @project_dir.to_s =~ /^.*\/totalfinder\/.*$/ %>
 
 // this file must go last to generate shared values
 <%= include('partials/shared_end') %>

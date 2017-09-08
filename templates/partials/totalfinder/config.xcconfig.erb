@@ -1,66 +1,58 @@
 // totalfinder-specific logic
 <%
-  def in_totalfinder_path?
-    @project_dir.to_s.start_with? File.expand_path(totalfinder_path).to_s
+  $plugins = %w(ColorfulSidebar CopyPathMenu DockProgressBar FoldersOnTop Tabs Visor ColumnViewAutoWidth CutAndPaste NoDesktopDots SystemFiles Template Labels)
+  $frameworks = %w(BAKit TotalKit Sparkle)
+
+  def plugin?
+    $plugins.include? @project and $plugins.include? @target
   end
+
+  def framework?
+    $frameworks.include? @project and $frameworks.include? @target
+  end
+
+  def shell?
+    @target=="TotalFinder" and @project=="Shell"
+  end
+
+  def totalkit?
+    @target=="TotalKit"
+  end
+
+  def bundle?
+    plugin? or shell?
+  end
+
+  def app?
+    ["Uninstaller", "Agent", "CrashWatcher"].include? @target
+  end
+
+  def osax?
+    (@project=="OSAX" and @target == "TotalFinder") or (@project=="OSAXSIP" and @target == "TotalFinderSIP")
+  end
+
+  def agent?
+    @target=='Agent'
+  end
+
+  def uninstaller?
+    @target=='Uninstaller'
+  end
+
 %>
 
-<% if in_totalfinder_path? %>
-  <%
-    $plugins = %w(ColorfulSidebar CopyPathMenu DockProgressBar FoldersOnTop Tabs Visor ColumnViewAutoWidth CutAndPaste NoDesktopDots SystemFiles Template Labels)
-    $frameworks = %w(BAKit TotalKit Sparkle)
+<%= include('base') %>
+<%= include('debug') if debug_configuration? %>
+<%= include('release') if release_configuration? %>
+<%= include('plugin') if plugin? %>
+<%= include('framework') if framework? %>
+<%= include('agent') if agent? %>
+<%= include('uninstaller') if uninstaller? %>
+<%= include('app') if app? %>
+<%= include('bundle') if bundle? %>
+<%= include('osax') if osax? %>
 
-    def plugin?
-      $plugins.include? @project and $plugins.include? @target
-    end
-
-    def framework?
-      $frameworks.include? @project and $frameworks.include? @target
-    end
-
-    def shell?
-      @target=="TotalFinder" and @project=="Shell"
-    end
-
-    def totalkit?
-      @target=="TotalKit"
-    end
-
-    def bundle?
-      plugin? or shell?
-    end
-
-    def app?
-      ["Uninstaller", "Agent", "CrashWatcher"].include? @target
-    end
-
-    def osax?
-      (@project=="OSAX" and @target == "TotalFinder") or (@project=="OSAXSIP" and @target == "TotalFinderSIP")
-    end
-
-    def agent?
-      @target=='Agent'
-    end
-
-    def uninstaller?
-      @target=='Uninstaller'
-    end
-
-  %>
-
-  <%= include('base') %>
-  <%= include('debug') if debug_configuration? %>
-  <%= include('release') if release_configuration? %>
-  <%= include('plugin') if plugin? %>
-  <%= include('framework') if framework? %>
-  <%= include('agent') if agent? %>
-  <%= include('uninstaller') if uninstaller? %>
-  <%= include('app') if app? %>
-  <%= include('bundle') if bundle? %>
-  <%= include('osax') if osax? %>
-
-  <% unless framework? then %>
-    // we want to treat all symbols as private in non-libraries
-    GCC_SYMBOLS_PRIVATE_EXTERN = YES
-  <% end %>
+<% unless framework? then %>
+  // we want to treat all symbols as private in non-libraries
+  GCC_SYMBOLS_PRIVATE_EXTERN = YES
 <% end %>
