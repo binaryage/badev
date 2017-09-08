@@ -8,45 +8,57 @@ A general command-line tool to aid project development in BinaryAge.
     bundle install
     export PATH=$PATH:`pwd`/badev/bin
     badev --help
+
 ## usage
 
-    badev
-  
-    A helper tool for development in BinaryAge
-  
-    Commands:
-      archive              generates next archive
-      authorize_send       get rid of those annoying authorization dialogs during development
-      beautify             beautifies source code in a directory tree
-      crash_totalfinder    externally crash TotalFinder
-      deauthorize_send     re-enable authorization dialogs
-      help                 Display global or [command] help documentation.
-      init_headers         creates BaClassPrefix.h/PrefixedClassAliases.h and a generates precompiled headers for all .xcodeprojs in a directory tree
-      init_xcconfigs       creates default xcconfig files for all .xcodeprojs in a directory tree
-      inject_totalfinder   attempt to inject TotalFinder
-      kill_finder          kill Finder
-      launch_finder        launch/activate Finder via AppleScript
-      open_totalfinder     open ~/Applications/TotalFinder.app
-      paydiff              diff latest payload
-      payload              generates missing payloads
-      prefix_classes       wraps all compilable ObjC classes with prefixing macro and regenerates BaClassPrefix.h/PrefixedClassAliases.h
-      push_archive         pushes archive repo
-      push_tags            pushes tags from all submodules
-      quit_finder          quit Finder deliberately via AppleScript
-      quit_totalfinder     quit Finder+TotalFinder deliberately via AppleScript
-      regen_xcconfigs      regenerates xcconfig files for all .xcodeprojs in a directory tree
-      restart_finder       restart Finder deliberately via AppleScript
-      restart_totalfinder  restart Finder+TotalFinder deliberately via AppleScript
-      retag                adds missing tags to submodules according to last tag in root repo
-      tfrmd                remove TotalFinder's dev installation
-      tfrmr                remove TotalFinder's retail installation
-  
-    Global Options:
-      -d, --dry-run        Show what would happen 
-      -h, --help           Display help documentation 
-      -v, --version        Display version information 
-      -t, --trace          Display backtrace when an error occurs 
-  
+    NAME:
+
+      badev
+
+    DESCRIPTION:
+
+      A helper tool for development in BinaryAge
+
+    COMMANDS:
+
+      archive             generates next archive
+      authorize_send      get rid of those annoying authorization dialogs during development
+      beautify            beautifies source code in a directory tree
+      crash_totalfinder   externally crash TotalFinder
+      deauthorize_send    re-enable authorization dialogs
+      help                Display global or [command] help documentation
+      init_xcconfigs      creates default xcconfig files for all .xcodeprojs in a directory tree
+      inject_totalfinder  attempt to inject TotalFinder
+      kill_finder         kill Finder
+      launch_finder       launch/activate Finder via AppleScript
+      open_totalfinder    open ~/Applications/TotalFinder.app
+      paydiff             diff latest payload
+      payload             generates missing payloads
+      push_archive        pushes archive repo
+      push_tags           pushes tags from all submodules
+      quit_finder         quit Finder deliberately via AppleScript
+      quit_totalfinder    quit Finder+TotalFinder deliberately via AppleScript
+      regen_xcconfigs     regenerates xcconfig files for all .xcodeprojs in a directory tree
+      restart_finder      restart Finder deliberately via AppleScript
+      restart_totalfinder restart Finder+TotalFinder deliberately via AppleScript
+      retag               adds missing tags to submodules according to last tag in root repo
+      tfrmd               remove TotalFinder's dev installation
+      tfrmr               remove TotalFinder's retail installation
+
+    GLOBAL OPTIONS:
+
+      -d, --dry-run
+          Show what would happen
+
+      -h, --help
+          Display help documentation
+
+      -v, --version
+          Display version information
+
+      -t, --trace
+          Display backtrace when an error occurs
+
 ## xcconfigs
 
 Managing multiple (10+) xcodeproj/configurations/targets is too much work. The idea is to have (ideally) no build settings in .xcodeproj files and manage them via .xcconfig files (it is diff friendly). By using xcconfig files we can include shared settings sets into different xcodeproj files and manage them from one central place. But it exposes three other problems:
