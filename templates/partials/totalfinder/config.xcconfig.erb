@@ -26,10 +26,6 @@
       @target=="TotalKit"
     end
 
-    def needs_finder_headers?
-      totalkit? or shell? or plugin?
-    end
-
     def bundle?
       plugin? or shell?
     end
@@ -62,8 +58,6 @@
   <%= include('app') if app? %>
   <%= include('bundle') if bundle? %>
   <%= include('osax') if osax? %>
-
-  <% $shared['HEADER_SEARCH_PATHS'] << "#{totalfinder_path}/headers" if needs_finder_headers? %>
 
   <% unless framework? then %>
     // we want to treat all symbols as private in non-libraries
