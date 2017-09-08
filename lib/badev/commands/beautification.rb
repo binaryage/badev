@@ -4,7 +4,6 @@ module Badev
 
     CLANG_FORMAT = File.join(TOOLS_DIR, 'clang-format')
     CLANG_FORMAT_CONFIG = File.join(CONFIGS_DIR, '.clang-format')
-    UNCRUSTIFY_CONFIG = File.join(CONFIGS_DIR, 'uncrustify.cfg')
     BEAUTIFY_CONFIG_NAME = '.beautify'
 
     def self.temp_clang_config(config)
@@ -16,12 +15,8 @@ module Badev
       end
     end
 
-    def self.reformat(options, file)
-      if options.uncrustify
-        sys("uncrustify -c \"#{UNCRUSTIFY_CONFIG}\" --replace --no-backup --mtime \"#{file}\"")
-      else
-        sys("\"#{CLANG_FORMAT}\" -i \"#{file}\"")
-      end
+    def self.reformat(_options, file)
+      sys("\"#{CLANG_FORMAT}\" -i \"#{file}\"")
     end
 
     def self.walk_submodules(options, dir)

@@ -132,7 +132,6 @@ class Badev::CLI
       c.option '--root PATH', String, 'Specify root path'
       c.option '--all', 'Cross submodule boundaries'
       c.option '--filter STRING', String, 'Additional regexp filter, e.g. .cpp'
-      c.option '--uncrustify', 'Use uncrustify instead of clang-format'
       c.action do |_args, options|
         options.default :root => Dir.pwd
         Badev::Beautification::beautify(options)
