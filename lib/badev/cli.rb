@@ -17,15 +17,18 @@ require 'badev/commands/beautification'
 require 'badev/commands/payloads'
 require 'badev/commands/archiving'
 
-class Badev
+module Badev
   class CLI
     def self.start(*_start_args)
-      $indent = ''
+      always_trace!
+      Helpers.reset_indent!
+
       program :name, 'badev'
       program :version, Badev::VERSION
       program :description, 'A helper tool for development in BinaryAge'
 
-      global_option('-d', '--dry-run', 'Show what would happen') { $dry_run = true }
+      global_option('-d', '--dry-run', 'Show what would happen') { run_dry! }
+      default_command :help
 
       command :archive do |c|
         c.description = 'generates next archive'

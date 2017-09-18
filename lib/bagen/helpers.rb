@@ -2,7 +2,7 @@
 
 module Bagen
   module Helpers
-    module_function :sys, :die
+    module_function
 
     def sys(cmd)
       puts ">#{cmd.yellow}"

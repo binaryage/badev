@@ -29,7 +29,7 @@ module Bagen
         end
       end
 
-      def binding # this is only a helper method to access the objects binding method
+      def provide_binding
         binding
       end
     end
@@ -60,7 +60,7 @@ module Bagen
       context = TemplatingContext.new(args, options)
       template = ERB.new File.read(template_path)
       Dir.chdir File.dirname(template_path) do
-        result = template.result(context.binding)
+        result = template.result(context.provide_binding)
       end
 
       # final cleanup

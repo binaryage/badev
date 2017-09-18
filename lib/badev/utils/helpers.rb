@@ -4,18 +4,24 @@ require 'open3'
 
 module Badev
   module Helpers
-    module_function :indent, :puts, :print_indented, :sys, :die, :shellescape, :revision, :short_revision
-    module_function :release_version_from_filename, :read_dwarfs_base_dir
+    @@indent = ''
+    @@dry_run = false
+
+    module_function
+
+    def reset_indent!
+      @@indent = ''
+    end
 
     def indent(how = '  ')
-      old_indent = $indent
-      $indent += how
+      previous_indent = @@indent
+      @@indent += how
       yield()
-      $indent = old_indent
+      @@indent = previous_indent
     end
 
     def puts(x)
-      Kernel.puts $indent + x.to_s
+      Kernel.puts @@indent + x.to_s
     end
 
     def print_indented(text)
@@ -24,13 +30,21 @@ module Badev
       end
     end
 
+    def dry_run?
+      @@dry_run
+    end
+
+    def run_dry!
+      @@dry_run = true
+    end
+
     def sys(cmd, soft = false, silenced = false)
       marker = '! '
-      marker = '? ' if $dry_run
+      marker = '? ' if dry_run?
       puts "#{marker.yellow}#{cmd.yellow}"
 
       output = ''
-      unless $dry_run
+      unless dry_run?
         status = nil
         output = Open3.popen2e(cmd) do |_stdin, out_and_err, wait_thr|
           status = wait_thr.value
@@ -41,7 +55,7 @@ module Badev
           print_indented(output) unless silenced
         end
 
-        unless status.exitstatus.success?
+        unless status.success?
           die("failed with code #{status.exitstatus}", status.exitstatus) unless soft
         end
       end

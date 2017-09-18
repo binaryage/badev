@@ -65,16 +65,16 @@ module Badev
       end
 
       res = ''
-      res << "\n"
-      res << "#{name}\n"
-      res << "=======================================================================\n"
-      res << tree
-      res << "\n"
-      res << exes
-      res << "\n"
-      res << deps
-      res << "\n"
-      res << symbols
+      res += "\n"
+      res += "#{name}\n"
+      res += "=======================================================================\n"
+      res += tree
+      res += "\n"
+      res += exes
+      res += "\n"
+      res += deps
+      res += "\n"
+      res += symbols
       res
     end
 
@@ -186,7 +186,7 @@ module Badev
 
     def self.generate_payload(options, dmg, out)
       puts "generating payload for #{dmg.blue}".green
-      return if $dry_run
+      return if dry_run?
 
       indent do
         tmp = File.join(TMP_PAYLOADS_DIR, File.basename(dmg, '.dmg'))
@@ -270,7 +270,7 @@ module Badev
       indent do
         Dir.chdir(options.root) do
           res = sys("ls -1 \"#{options.payloads}\"/*.txt", false, true).split("\n")
-          return if $dry_run
+          return if dry_run?
 
           res = res.sort do |a, b|
             va = release_version_from_filename a

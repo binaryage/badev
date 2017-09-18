@@ -24,13 +24,12 @@ module Badev
     end
 
     def self.push_tags(options)
-      $options = options
-      msg = "pushing tags in #{$options.root.blue}"
+      msg = "pushing tags in #{options.root.blue}"
       puts msg
 
       indent do
-        Dir.chdir $options.root do
-          walk_submodules($options.root, 0)
+        Dir.chdir options.root do
+          walk_submodules(options.root, 0)
         end
       end
     end
