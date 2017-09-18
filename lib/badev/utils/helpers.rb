@@ -4,7 +4,8 @@ require 'open3'
 
 module Badev
   module Helpers
-    extend self
+    module_function :indent, :puts, :print_indented, :sys, :die, :shellescape, :revision, :short_revision
+    module_function :release_version_from_filename, :read_dwarfs_base_dir
 
     def indent(how = '  ')
       old_indent = $indent
@@ -40,7 +41,7 @@ module Badev
           print_indented(output) unless silenced
         end
 
-        if status.exitstatus > 0
+        unless status.exitstatus.success?
           die("failed with code #{status.exitstatus}", status.exitstatus) unless soft
         end
       end
@@ -93,7 +94,9 @@ module Badev
     end
 
     def read_dwarfs_base_dir
-      return File.expand_path(File.read('totalfinder/.dwarfs').strip) if File.exist? 'totalfinder/.dwarfs' # HACK: for TotalFinder
+      if File.exist? 'totalfinder/.dwarfs'
+        return File.expand_path(File.read('totalfinder/.dwarfs').strip) # HACK: for TotalFinder
+      end
       unless File.exist? '.dwarfs'
         puts ".dwarfs file is not present in #{Dir.pwd.blue}".red
         return nil

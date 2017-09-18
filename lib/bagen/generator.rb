@@ -25,11 +25,11 @@ module Bagen
         template_path += '.xcconfig.erb' unless template_path.match?(/xcconfig\.erb$/)
         template = ERB.new File.read(template_path)
         Dir.chdir File.dirname(template_path) do
-          template.result(get_binding)
+          template.result(binding)
         end
       end
 
-      def get_binding # this is only a helper method to access the objects binding method
+      def binding # this is only a helper method to access the objects binding method
         binding
       end
     end
@@ -47,20 +47,20 @@ module Bagen
       template_path = File.join(templates_dir, template + '.xcconfig.erb')
       die "required template does not exists at #{template_path.yellow}" unless File.exist? template_path
 
-      header = <<-XEND.gsub(/^ {6}/, '')
-      // A GENERATED FILE by bagen utility
-      // more info: https://github.com/binaryage/badev
-      //
-      //   !!! DO NOT EDIT IT BY HAND !!!
-      //
+      header = <<~XCCONFIG_HEADER
+        // A GENERATED FILE by bagen utility
+        // more info: https://github.com/binaryage/badev
+        //
+        //   !!! DO NOT EDIT IT BY HAND !!!
+        //
 
-      XEND
+      XCCONFIG_HEADER
 
       result = nil
       context = TemplatingContext.new(args, options)
       template = ERB.new File.read(template_path)
       Dir.chdir File.dirname(template_path) do
-        result = template.result(context.get_binding)
+        result = template.result(context.binding)
       end
 
       # final cleanup

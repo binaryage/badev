@@ -15,7 +15,7 @@ XCODE_CONTENTS_PATH = XCODE_DEV_PATH.dirname
 XCODE_PATH = XCODE_CONTENTS_PATH.dirname
 SUB_RPATHS = %w[Frameworks OtherFrameworks SharedFrameworks].freeze
 
-def has_rpath(rpath, rpaths)
+def rpath?(rpath, rpaths)
   rpaths.each do |path|
     next unless path == rpath
     return true
@@ -24,17 +24,17 @@ end
 
 def add_rpaths(base, rpaths)
   SUB_RPATHS.each do |subpath|
-    next if has_rpath(XCODE_CONTENTS_PATH + subpath, rpaths)
-    next if has_rpath(XCODE_DEV_PATH.dirname + subpath, rpaths)
-    next if has_rpath(base + subpath, rpaths)
+    next if rpath?(XCODE_CONTENTS_PATH + subpath, rpaths)
+    next if rpath?(XCODE_DEV_PATH.dirname + subpath, rpaths)
+    next if rpath?(base + subpath, rpaths)
     rpath = base + subpath
-    `install_name_tool -add_rpath #{rpath} \"#{XCPROJECT_PATH}\"`
+    `install_name_tool -add_rpath #{rpath} "#{XCPROJECT_PATH}"`
   end
 end
 
 def find_rpaths
   paths = []
-  load_commands = `otool -l \"#{XCPROJECT_PATH}\"`
+  load_commands = `otool -l "#{XCPROJECT_PATH}"`
   load_commands.scan(/cmd LC_RPATH\n.+?\n\s+path\s+([^ ]+) \(.+?\)/) do |path|
     paths << path
   end

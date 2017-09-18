@@ -33,7 +33,8 @@ module Badev
               puts "using #{BEAUTIFY_CONFIG_NAME.blue} config with #{excludes.size} excludes"
             end
 
-            filter = Regexp.new (options.filter || '')
+            filter_str = options.filter || ''
+            filter = Regexp.new filter_str
             files = `git ls-tree -r HEAD --name-only`.strip.split("\n") # list files under version control
 
             temp_clang_config(CLANG_FORMAT_CONFIG) do

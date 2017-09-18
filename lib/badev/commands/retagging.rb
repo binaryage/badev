@@ -15,7 +15,7 @@ module Badev
 
           indent do
             if sha
-              if level > 0
+              if level.positive?
                 tag_exists = !`git tag | grep #{prefixed_tag}`.strip.empty?
                 if tag_exists && !$options.force
                   existing_sha = `git rev-list -1 '#{prefixed_tag}'`.strip
@@ -53,11 +53,11 @@ module Badev
 
       indent do
         Dir.chdir $options.root do
-          if $options.all
-            tags = `git tag`.strip.split "\n" # gives me all tags
-          else
-            tags = [`git describe --tags --abbrev=0`.strip] # gives me the last tag on current branch
-          end
+          tags = if $options.all
+                   `git tag`.strip.split "\n" # gives me all tags
+                 else
+                   [`git describe --tags --abbrev=0`.strip] # gives me the last tag on current branch
+                 end
 
           tags.each do |tag|
             puts "processing tag #{tag.green}"

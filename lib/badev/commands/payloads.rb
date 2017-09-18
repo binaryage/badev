@@ -20,7 +20,8 @@ module Badev
       name = File.basename pkg
 
       Dir.chdir(extractor_dir) do
-        sys("mv \"#{name}\" \"__#{name}\"") # this is here to prevent name clash, Asepsis.pkg archive file was extracted into Asepsis.pkg folder
+        # this mv is here to prevent name clash, Asepsis.pkg archive file was extracted into Asepsis.pkg folder
+        sys("mv \"#{name}\" \"__#{name}\"")
         sys("xar -xf \"__#{name}\"")
 
         Dir.glob('*.pkg') do |path|
@@ -77,7 +78,7 @@ module Badev
       res
     end
 
-    def self.is_symbol_obfuscation_partial?(name)
+    def self.symbol_obfuscation_partial?(name)
       name =~ /\[(.*)\]/
       parts = Regexp.last_match(1).strip.split(' ')
       sel = parts[1]
@@ -90,7 +91,7 @@ module Badev
       false
     end
 
-    def self.is_symbol_obfuscated?(name)
+    def self.symbol_obfuscated?(name)
       name =~ /\[(.*)\]/
       parts = Regexp.last_match(1).strip.split(' ')
       sel = parts[1]
@@ -141,9 +142,9 @@ module Badev
         end
         s[:ignored] = s[:translated] =~ ignores_regexps
         unless s[:ignored]
-          s[:partial] = is_symbol_obfuscation_partial?(s[:raw])
+          s[:partial] = symbol_obfuscation_partial?(s[:raw])
           unless s[:partial]
-            s[:fixme] = !is_symbol_obfuscated?(s[:raw])
+            s[:fixme] = !symbol_obfuscated?(s[:raw])
             s[:ok] = true unless s[:fixme]
           end
         end
@@ -163,8 +164,9 @@ module Badev
       end
 
       res = []
-      res << "Detected #{symbols.size} methods in our classes (#{ignored_count} ignored, #{ok_count} ok, #{fixme_count} need fixing and #{partial_count} partial)"
-      if fixme_count > 0
+      res << "Detected #{symbols.size} methods in our classes "
+      res << "(#{ignored_count} ignored, #{ok_count} ok, #{fixme_count} need fixing and #{partial_count} partial)"
+      if fixme_count.positive?
         res << ''
         res << "Non-obfuscated (#{fixme_count}) - need fixing or add them into ignores:"
         symbols.each do |symbol|
@@ -172,7 +174,7 @@ module Badev
         end
         res << ''
       end
-      if partial_count > 0
+      if partial_count.positive?
         res << ''
         res << "Partially obfuscated (#{partial_count}) - need fixing:"
         symbols.each do |symbol|

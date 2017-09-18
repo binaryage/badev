@@ -2,14 +2,13 @@
 
 module Bagen
   module Helpers
-    extend self
+    module_function :sys, :die
 
     def sys(cmd)
       puts ">#{cmd.yellow}"
-      unless system(cmd)
-        puts 'failed'.red
-        exit 1
-      end
+      return if system(cmd)
+      puts 'failed'.red
+      exit 1
     end
 
     def die(msg)
