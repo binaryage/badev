@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Badev
   module Archiving
     extend Badev::Helpers
@@ -54,15 +56,15 @@ module Badev
         sys("mkdir -p \"#{tmp}\"")
 
         res = sys("hdiutil attach \"#{dmg}\" -mountrandom \"#{TMP_PAYLOADS_DIR}\"")
-        disk = res.split("\n").select { |l| l.strip=~/\/dev/ }.first.split("\t").first.strip
+        disk = res.split("\n").select { |l| l.strip =~ /\/dev/ }.first.split("\t").first.strip
         volume = ''
         res.each_line do |line|
-          next unless line =~ /Apple_HFS/
+          next unless line.match?(/Apple_HFS/)
           volume = line.split("\t")[2].strip
           break
         end
 
-        die('bad disk') unless disk =~ /\/dev/
+        die('bad disk') unless disk.match?(/\/dev/)
         die('bad volume') if volume.empty?
 
         sys("cp -r #{volume}/* \"#{tmp}\"")
@@ -75,20 +77,20 @@ module Badev
     end
 
     def self.generate_dmg_archive(file)
-      sys('rm -rf dmg') if File.exists? 'dmg'
+      sys('rm -rf dmg') if File.exist? 'dmg'
       sys('mkdir dmg')
       copy_dmg_content(file, File.expand_path('dmg'))
     end
 
     def self.copy_dwarfs(source)
-      die "dwarfs missing in #{source.blue}" unless File.exists? source
-      sys('rm -rf dwarfs') if File.exists? 'dwarfs'
+      die "dwarfs missing in #{source.blue}" unless File.exist? source
+      sys('rm -rf dwarfs') if File.exist? 'dwarfs'
       sys('mkdir dwarfs')
       sys("cp -a \"#{source}\"/* dwarfs")
     end
 
     def self.copy_obfuscation_table(source)
-      unless File.exists? source
+      unless File.exist? source
         puts "obfuscation table missing in #{source.blue}".red
         return
       end
@@ -96,14 +98,14 @@ module Badev
     end
 
     def self.write_sha(rev)
-      sys('rm sha.txt') if File.exists? 'sha.txt'
+      sys('rm sha.txt') if File.exist? 'sha.txt'
       sys("echo #{rev} > sha.txt")
     end
 
     def self.copy_payload(payloads, name)
-      sys('rm payload.txt') if File.exists? 'payload.txt'
-      payload = File.join(payloads, name+'.txt')
-      if File.exists? payload
+      sys('rm payload.txt') if File.exist? 'payload.txt'
+      payload = File.join(payloads, name + '.txt')
+      if File.exist? payload
         sys("cp \"#{payload}\" payload.txt")
       else
         die "missing payload: #{payload}"
@@ -126,13 +128,13 @@ module Badev
 
         rev = revision
 
-        unless File.exists?(options.archive)
+        unless File.exist?(options.archive)
           sys("mkdir -p \"#{options.archive}\"")
           Dir.chdir(options.archive) do
             puts "in #{options.archive.blue}"
             indent do
               sys('git init')
-              sys("git commit --allow-empty -m \"BIG BANG!\"")
+              sys('git commit --allow-empty -m "BIG BANG!"')
               puts 'Important: you still have to setup proper product branch (e.g. totalfinder-archive) and remote repo url for pushing (e.g. binaryage/root).'
             end
           end
@@ -153,7 +155,7 @@ module Badev
           dmgs = dmgs.sort do |a, b|
             va = release_version_from_filename a, '.dmg'
             vb = release_version_from_filename b, '.dmg'
-            vb<=>va
+            vb <=> va
           end
 
           dmgs.reverse!
@@ -194,6 +196,5 @@ module Badev
         end
       end
     end
-
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'pathname'
 require 'xcodeproj'
 require 'pp'
@@ -6,9 +8,7 @@ require 'erb'
 
 module Bagen
   module Generator
-
     class TemplatingContext
-
       include Bagen::Helpers
 
       def initialize(args, options)
@@ -22,7 +22,7 @@ module Bagen
       end
 
       def include(template_path)
-        template_path += '.xcconfig.erb' unless template_path =~ /xcconfig\.erb$/
+        template_path += '.xcconfig.erb' unless template_path.match?(/xcconfig\.erb$/)
         template = ERB.new File.read(template_path)
         Dir.chdir File.dirname(template_path) do
           template.result(get_binding)
@@ -45,7 +45,7 @@ module Bagen
       template = args[0]
       output = options.output
       template_path = File.join(templates_dir, template + '.xcconfig.erb')
-      die "required template does not exists at #{template_path.yellow}" unless File.exists? template_path
+      die "required template does not exists at #{template_path.yellow}" unless File.exist? template_path
 
       header = <<-XEND.gsub(/^ {6}/, '')
       // A GENERATED FILE by bagen utility
@@ -65,12 +65,12 @@ module Bagen
 
       # final cleanup
       lines = result.split("\n")
-      lines.map! { |line| line.strip } # strip lines
-      lines.reject! { |line| line=~ /^\/\/([^\/]|$)/ } # remove simple comments
-      lines.reject! { |line| line.empty? } # remove empty lines
+      lines.map!(&:strip) # strip lines
+      lines.reject! { |line| line =~ /^\/\/([^\/]|$)/ } # remove simple comments
+      lines.reject!(&:empty?) # remove empty lines
       lines.map! { |line| line.gsub(/^\/\/\/(.*)$/, '//\1') } # replace tripple comments with normal comments
 
-      contents = header+lines.join("\n")
+      contents = header + lines.join("\n")
 
       if output
         File.open(output, 'w') { |file| file.write(contents) }
@@ -78,6 +78,5 @@ module Bagen
         puts contents
       end
     end
-
   end
 end

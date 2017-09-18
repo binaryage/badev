@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Badev
   module Osax
     extend Badev::Helpers
@@ -12,6 +14,5 @@ module Badev
     def self.deauthorize_send(_options)
       sys(DEAUTHORIZE_SEND_CMD)
     end
-
   end
 end

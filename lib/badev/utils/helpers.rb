@@ -1,11 +1,12 @@
+# frozen_string_literal: true
+
 require 'open3'
 
 module Badev
   module Helpers
-
     extend self
 
-    def indent(how='  ')
+    def indent(how = '  ')
       old_indent = $indent
       $indent += how
       yield()
@@ -13,7 +14,7 @@ module Badev
     end
 
     def puts(x)
-      Kernel.puts $indent+x.to_s
+      Kernel.puts $indent + x.to_s
     end
 
     def print_indented(text)
@@ -22,7 +23,7 @@ module Badev
       end
     end
 
-    def sys(cmd, soft=false, silenced=false)
+    def sys(cmd, soft = false, silenced = false)
       marker = '! '
       marker = '? ' if $dry_run
       puts "#{marker.yellow}#{cmd.yellow}"
@@ -47,7 +48,7 @@ module Badev
       output
     end
 
-    def die(msg, exitstatus=1)
+    def die(msg, exitstatus = 1)
       puts msg.red
       exit exitstatus
     end
@@ -63,7 +64,7 @@ module Badev
       # Treat multibyte characters as is.  It is caller's responsibility
       # to encode the string in the right encoding for the shell
       # environment.
-      str.gsub!(/([^A-Za-z0-9_\-.,:\/@\n])/, "\\\\\\1")
+      str.gsub!(/([^A-Za-z0-9_\-.,:\/@\n])/, '\\\\\\1')
 
       # A LF cannot be escaped with a backslash because a backslash + LF
       # combo is regarded as line continuation and simply ignored.
@@ -80,27 +81,24 @@ module Badev
       revision[0...7]
     end
 
-    def release_version_from_filename(n, ext='.txt')
+    def release_version_from_filename(n, ext = '.txt')
       # n == /Users/darwin/code/totalfinder/payloads/TotalFinder-0.7.1.txt
       p = File.basename(n, ext).split('-')[1]
       n = p.split('.')
-      while n.size < 3 do
-        n << '0'
-      end
-      x = (n[0]||'0').to_i
-      y = (n[1]||'0').to_i
-      z = (n[2]||'0').to_i
-      x*1000000 + y*1000 + z
+      n << '0' while n.size < 3
+      x = (n[0] || '0').to_i
+      y = (n[1] || '0').to_i
+      z = (n[2] || '0').to_i
+      x * 1_000_000 + y * 1000 + z
     end
 
     def read_dwarfs_base_dir
-      return File.expand_path(File.read('totalfinder/.dwarfs').strip) if File.exists? 'totalfinder/.dwarfs' # hack for TotalFinder
-      unless File.exists? '.dwarfs'
+      return File.expand_path(File.read('totalfinder/.dwarfs').strip) if File.exist? 'totalfinder/.dwarfs' # HACK: for TotalFinder
+      unless File.exist? '.dwarfs'
         puts ".dwarfs file is not present in #{Dir.pwd.blue}".red
         return nil
       end
       File.expand_path(File.read('.dwarfs').strip)
     end
-
   end
 end

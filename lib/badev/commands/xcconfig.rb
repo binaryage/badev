@@ -1,35 +1,34 @@
+# frozen_string_literal: true
+
 require 'xcodeproj'
 
 module Badev
   module XCConfig
-
     extend Badev::Helpers
 
     XCPROJECT = File.join(TOOLS_DIR, 'xcproject')
 
-    def self.prefix_header_path(target, root_dir, conf='Debug')
-      return nil if target.nil? or root_dir.nil?
+    def self.prefix_header_path(target, root_dir, conf = 'Debug')
+      return nil if target.nil? || root_dir.nil?
       original_pch = `#{XCPROJECT} print-settings -e -p #{shellescape(target.project.path)} -t #{shellescape(target.name)} -c #{shellescape(conf)} GCC_PREFIX_HEADER`.strip
       original = Pathname.new(original_pch)
       if original.absolute?
-        unless original_pch =~ /^#{root_dir}/
-          return nil
-        end
+        return nil unless original_pch.match?(/^#{root_dir}/)
       end
 
       original
     end
 
-    def self.generated_prefix_header_path(target, root_dir, conf='Debug')
+    def self.generated_prefix_header_path(target, root_dir, conf = 'Debug')
       return nil if target.nil?
       # get the originally specified precompiled header
       original = prefix_header_path(target, root_dir, conf)
 
       # sanity check
-      return nil if original.nil? or original.to_s.empty?
+      return nil if original.nil? || original.to_s.empty?
 
       # bail if original value is our generated pch
-      return original if original.to_s =~ /_generated.pch$/
+      return original if original.to_s.match?(/_generated.pch$/)
 
       # generated value based on original pch
       original.dirname + "#{original.basename(original.extname)}_generated.pch"
@@ -39,10 +38,9 @@ module Badev
       xcodeprojs = []
 
       dirs.each do |base|
-        if File.exists? base
-          Dir.glob(File.join(base, '**/*.xcodeproj')) do |dir|
-            xcodeprojs << File.expand_path(dir)
-          end
+        next unless File.exist? base
+        Dir.glob(File.join(base, '**/*.xcodeproj')) do |dir|
+          xcodeprojs << File.expand_path(dir)
         end
       end
 
@@ -51,9 +49,7 @@ module Badev
 
     def self.make_xcconfig_line(key, value)
       v = value
-      if value.kind_of?(Array)
-        v = value.join(' ')
-      end
+      v = value.join(' ') if value.is_a?(Array)
 
       "#{key} = #{v}"
     end
@@ -65,9 +61,9 @@ module Badev
       // this file should be set as #{configuration} configuration for target #{target} in #{project}.xcodeproj
       XEND
 
-      if original_xcconfig.length > 0
+      unless original_xcconfig.empty?
         template << <<-XEND.gsub(/^ {8}/, '')
-        
+
         // include the previously set xcconfig
         #include "#{original_xcconfig}"
         XEND
@@ -95,7 +91,7 @@ module Badev
     def self.generated_xcconfig_path(xcconfig)
       return '' if xcconfig.nil?
       xcconfig = Pathname.new(xcconfig)
-      return xcconfig if xcconfig.to_s =~ /_generated\.xcconfig$/
+      return xcconfig if xcconfig.to_s.match?(/_generated\.xcconfig$/)
       xcconfig.dirname.join("#{xcconfig.basename(xcconfig.extname)}_generated.xcconfig").to_s
     end
 
@@ -104,7 +100,7 @@ module Badev
     end
 
     def self.original_xcconfig_include_path(current, xcconfig)
-      return '' if current.empty? or xcconfig == current
+      return '' if current.empty? || (xcconfig == current)
       Pathname.new(current).relative_path_from(Pathname.new(xcconfig).dirname).to_s
     end
 
@@ -128,19 +124,18 @@ module Badev
           filename = File.join(dest, "#{basename}_#{conf.name}_#{target.name}.xcconfig")
           destname = (File.basename filename, '.xcconfig') + '_generated.xcconfig'
           original_xcconfig = original_xcconfig_path(target, conf)
-          if File.exists? filename
+          if File.exist? filename
             puts "#{filename.blue} already exists => skipping"
           else
             content = build_default_xcconfig(destname, basename, conf.name, target.name, [configuration_settings, target_settings], original_xcconfig_include_path(original_xcconfig, filename))
             File.open(filename, 'w') { |file| file.write(content) }
-            relpath = './'+Pathname.new(filename).relative_path_from(Pathname.pwd).to_s
+            relpath = './' + Pathname.new(filename).relative_path_from(Pathname.pwd).to_s
             puts "generated: #{relpath.yellow}"
           end
 
-          if options.add and File.exists? filename
-            unless original_xcconfig == filename
-              sys("#{XCPROJECT} set-config -a -f -p #{shellescape(proj.path)} -t #{shellescape(target.name)} -c #{shellescape(conf.name)} -g #{shellescape(options.group)} #{shellescape(filename)}")
-            end
+          next unless options.add && File.exist?(filename)
+          unless original_xcconfig == filename
+            sys("#{XCPROJECT} set-config -a -f -p #{shellescape(proj.path)} -t #{shellescape(target.name)} -c #{shellescape(conf.name)} -g #{shellescape(options.group)} #{shellescape(filename)}")
           end
         end
       end
@@ -148,7 +143,7 @@ module Badev
 
     def self.convert_generator(path)
       lines = File.read(path).split("\n")
-      return unless lines[0] =~ /\/\/!/
+      return unless lines[0].match?(/\/\/!/)
       i = lines[0].rindex('>')
       return unless i
       lines[0] = lines[0].slice(0, i).rstrip
@@ -162,7 +157,7 @@ module Badev
       convert_generator(path)
       lines = File.read(path).split("\n")
       return unless lines[0] =~ /\/\/!(.*)/
-      $1.strip
+      Regexp.last_match(1).strip
     end
 
     def self.init_configs_in_tree(_args, options)
@@ -191,7 +186,7 @@ module Badev
             next unless generator
 
             dir = xcconfig.dirname.to_s
-            puts "in #{dir.blue}:" if lastdir!=dir
+            puts "in #{dir.blue}:" if lastdir != dir
             lastdir = dir
             generator << " --root #{shellescape(root_path)} --project_dir #{shellescape(proj.path.dirname.to_s)}"
             generator << " --output #{shellescape(generated_xcconfig_path(xcconfig))}"
@@ -200,6 +195,5 @@ module Badev
         end
       end
     end
-
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Badev
   module Payloads
     extend Badev::Helpers
@@ -35,7 +37,7 @@ module Badev
             binaries = []
             Dir.glob('**/*') do |file|
               next unless File.executable? file
-              next unless `file \"#{file}\"` =~ /Mach-O/
+              next unless `file \"#{file}\"`.match?(/Mach-O/)
               binaries << file
             end
 
@@ -48,7 +50,7 @@ module Badev
             binaries.each do |binary|
               lines = `otool -L "#{binary}"`.split("\n")
               lines = [lines[0]].concat(lines[1..-1].sort)
-              deps += lines.join("\n")+"\n"
+              deps += lines.join("\n") + "\n"
               deps += "\n"
             end
 
@@ -57,7 +59,6 @@ module Badev
               symbols += `nm -aj "#{binary}"` + "\n"
               symbols += "\n"
             end
-
           end
         end
       end
@@ -78,20 +79,20 @@ module Badev
 
     def self.is_symbol_obfuscation_partial?(name)
       name =~ /\[(.*)\]/
-      parts = $1.strip.split(' ')
+      parts = Regexp.last_match(1).strip.split(' ')
       sel = parts[1]
-      return false unless sel =~ /^TF\$/
+      return false unless sel.match?(/^TF\$/)
       chunks = sel.split(':')
       chunks.each do |chunk|
-        next unless chunk.size>0
-        return true unless chunk =~ /^TF\$/
+        next if chunk.empty?
+        return true unless chunk.match?(/^TF\$/)
       end
-      return false
+      false
     end
 
     def self.is_symbol_obfuscated?(name)
       name =~ /\[(.*)\]/
-      parts = $1.strip.split(' ')
+      parts = Regexp.last_match(1).strip.split(' ')
       sel = parts[1]
       sel =~ /TF\$/
     end
@@ -102,7 +103,7 @@ module Badev
       mapping_table_file = File.join(base_dir, 'obfuscation.txt')
       used_symbols_file = File.join(base_dir, 'obfuscation_used_symbols.txt')
 
-      unless File.exists? ignores_file
+      unless File.exist? ignores_file
         puts 'skipping obfuscation report'.red + " - #{ignores_file.yellow} is missing"
         return ''
       end
@@ -114,13 +115,13 @@ module Badev
         meat = sre.split('#')[0] # strip comments
         next unless meat
         meat.strip!
-        next unless meat.size>0 # skip empty lines
+        next if meat.empty? # skip empty lines
         subexprs << Regexp.new(meat)
       end
       ignores_regexps = Regexp.union(subexprs)
 
       # parse mapping table
-      mapping = Hash.new
+      mapping = {}
       mapping_data = File.read(mapping_table_file).split("\n")
       mapping_data.each do |element|
         parts = element.split(' ')
@@ -131,11 +132,11 @@ module Badev
       symbols = []
       symbols_data = File.read(used_symbols_file).split("\n")
       symbols_data.each do |symbol|
-        s = Hash.new
+        s = {}
         s[:raw] = symbol
         s[:translated] = symbol.gsub(/(TF\$[a-zA-Z0-9_]+)/) do
-          key = mapping[$1]
-          die("unable to translate symbol '#{$1}'") unless key
+          key = mapping[Regexp.last_match(1)]
+          die("unable to translate symbol '#{Regexp.last_match(1)}'") unless key
           key
         end
         s[:ignored] = s[:translated] =~ ignores_regexps
@@ -143,9 +144,7 @@ module Badev
           s[:partial] = is_symbol_obfuscation_partial?(s[:raw])
           unless s[:partial]
             s[:fixme] = !is_symbol_obfuscated?(s[:raw])
-            unless s[:fixme]
-              s[:ok] = true
-            end
+            s[:ok] = true unless s[:fixme]
           end
         end
         symbols << s
@@ -157,15 +156,15 @@ module Badev
       fixme_count = 0
 
       symbols.each do |symbol|
-        ignored_count = ignored_count+1 if symbol[:ignored]
-        partial_count = partial_count+1 if symbol[:partial]
-        ok_count = ok_count+1 if symbol[:ok]
-        fixme_count = fixme_count+1 if symbol[:fixme]
+        ignored_count += 1 if symbol[:ignored]
+        partial_count += 1 if symbol[:partial]
+        ok_count += 1 if symbol[:ok]
+        fixme_count += 1 if symbol[:fixme]
       end
 
       res = []
       res << "Detected #{symbols.size} methods in our classes (#{ignored_count} ignored, #{ok_count} ok, #{fixme_count} need fixing and #{partial_count} partial)"
-      if fixme_count>0
+      if fixme_count > 0
         res << ''
         res << "Non-obfuscated (#{fixme_count}) - need fixing or add them into ignores:"
         symbols.each do |symbol|
@@ -173,7 +172,7 @@ module Badev
         end
         res << ''
       end
-      if partial_count>0
+      if partial_count > 0
         res << ''
         res << "Partially obfuscated (#{partial_count}) - need fixing:"
         symbols.each do |symbol|
@@ -202,7 +201,7 @@ module Badev
           break
         end
 
-        die('bad disk') unless disk =~ /^\/dev/
+        die('bad disk') unless disk.match?(/^\/dev/)
         die('bad volume') if volume.empty?
 
         sys("cp -r #{volume}/* \"#{tmp}\"")
@@ -230,7 +229,7 @@ module Badev
         outdir = File.dirname out
         `mkdir -p #{outdir}` unless File.exist? outdir
         File.open(out, 'w') do |f|
-          if obfuscation_report.size>0
+          unless obfuscation_report.empty?
             f << "OBFUSCATION REPORT\n"
             f << "==================\n"
             f << obfuscation_report
@@ -257,8 +256,8 @@ module Badev
       Dir.chdir(options.root) do
         Dir.glob(File.join(options.releases, '*.dmg')).each do |file|
           name = File.basename(file, '.dmg')
-          dest = File.join(options.payloads, name+'.txt')
-          next if not options.force and File.exist? dest
+          dest = File.join(options.payloads, name + '.txt')
+          next if !options.force && File.exist?(dest)
           generate_payload(options, file, dest)
         end
       end
@@ -274,13 +273,12 @@ module Badev
           res = res.sort do |a, b|
             va = release_version_from_filename a
             vb = release_version_from_filename b
-            vb<=>va
+            vb <=> va
           end
 
           sys("\"#{options.differ}\" \"#{res[1]}\" \"#{res[0]}\"")
         end
       end
     end
-
   end
 end

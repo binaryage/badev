@@ -1,9 +1,10 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 begin
-    BASE_DIR = File.expand_path(File.dirname(File.readlink(__FILE__))) # this may be a symlink, resolve to real location
+  BASE_DIR = File.expand_path(File.dirname(File.readlink(__FILE__))) # this may be a symlink, resolve to real location
 rescue
-    BASE_DIR = File.expand_path(File.dirname(__FILE__)) # for local debugging
+  BASE_DIR = __dir__ # for local debugging
 end
 
 require 'pathname'
@@ -12,7 +13,7 @@ XCPROJECT_PATH = File.join(BASE_DIR, '_xcproject')
 XCODE_DEV_PATH = Pathname.new(`xcode-select -p`.strip)
 XCODE_CONTENTS_PATH = XCODE_DEV_PATH.dirname
 XCODE_PATH = XCODE_CONTENTS_PATH.dirname
-SUB_RPATHS = %w(Frameworks OtherFrameworks SharedFrameworks)
+SUB_RPATHS = %w[Frameworks OtherFrameworks SharedFrameworks].freeze
 
 def has_rpath(rpath, rpaths)
   rpaths.each do |path|
@@ -42,7 +43,7 @@ end
 
 # catch any exceptions thrown by this procedure and just execute _xcproject as is
 begin
-  if XCODE_DEV_PATH.exist? or ENV['xcode']
+  if XCODE_DEV_PATH.exist? || ENV['xcode']
     rpaths = find_rpaths
     xcode_path = ENV['xcode'] || XCODE_CONTENTS_PATH
     add_rpaths(xcode_path, rpaths)

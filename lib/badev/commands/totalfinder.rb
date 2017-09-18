@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Badev
   module TotalFinder
     extend Badev::Helpers
@@ -69,6 +71,5 @@ module Badev
       sys(REMOVE_REL_OSAXSIP_CMD)
       sys(REMOVE_REL_APP_CMD)
     end
-
   end
 end

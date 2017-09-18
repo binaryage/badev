@@ -1,6 +1,7 @@
+# frozen_string_literal: true
+
 module Badev
   module Retagging
-
     extend Badev::Helpers
 
     def self.prefix_tag(prefix, tag)
@@ -14,9 +15,9 @@ module Badev
 
           indent do
             if sha
-              if level>0
-                tag_exists = !(`git tag | grep #{prefixed_tag}`.strip.empty?)
-                if tag_exists and not $options.force
+              if level > 0
+                tag_exists = !`git tag | grep #{prefixed_tag}`.strip.empty?
+                if tag_exists && !$options.force
                   existing_sha = `git rev-list -1 '#{prefixed_tag}'`.strip
                   if existing_sha != sha
                     puts "the tag '#{prefixed_tag}' already exists and differs => skipping (use --force to overwrite it)".red
@@ -34,11 +35,11 @@ module Badev
           end
 
           submodules = []
-          submodules = `grep path .gitmodules | sed 's/.*= //'`.split "\n" if File.exists? '.gitmodules'
+          submodules = `grep path .gitmodules | sed 's/.*= //'`.split "\n" if File.exist? '.gitmodules'
           submodules.each do |path|
             sub_path = File.join(dir, path)
             sub_sha = `git ls-tree #{sha} #{path}`.split(' ')[2]
-            walk_submodules(sub_path, prefixed_tag, sub_sha, level+1)
+            walk_submodules(sub_path, prefixed_tag, sub_sha, level + 1)
           end
         end
       end
@@ -67,6 +68,5 @@ module Badev
         end
       end
     end
-
   end
 end

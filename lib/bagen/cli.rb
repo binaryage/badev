@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'commander/import'
 require 'colored'
 
@@ -6,7 +8,6 @@ require 'bagen/helpers'
 require 'bagen/generator'
 
 class Bagen::CLI
-
   def self.start(*_args)
     program :name, 'bagen'
     program :version, Bagen::VERSION
@@ -19,11 +20,10 @@ class Bagen::CLI
       c.option '--output PATH', String, 'Specify PATH to write xcconfig'
       c.option '--project_dir PATH', String, 'Specify PATH of project'
       c.action do |args, options|
-        options.default :root => Dir.pwd
-        options.default :project_dir => Dir.pwd
-        Bagen::Generator::generate(args, options)
+        options.default root: Dir.pwd
+        options.default project_dir: Dir.pwd
+        Bagen::Generator.generate(args, options)
       end
     end
   end
-
 end

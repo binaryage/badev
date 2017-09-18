@@ -1,0 +1,16 @@
+AllCops:
+  TargetRubyVersion: 2.4
+  Include:
+    - '**/Gemfile'
+    - '**/Rakefile'
+    - '**/rakefile'
+    - 'bin/badev'
+    - 'bin/bagen'
+  Exclude:
+    - 'templates'
+    - 'pkg'
+    - 'configs'
+    - 'bin'
+
+Metrics/LineLength:
+  Max: 126

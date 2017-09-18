@@ -1,6 +1,7 @@
+# frozen_string_literal: true
+
 module Bagen
   module Helpers
-
     extend self
 
     def sys(cmd)

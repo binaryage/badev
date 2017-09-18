@@ -1,6 +1,7 @@
+# frozen_string_literal: true
+
 module Badev
   module PushTags
-
     extend Badev::Helpers
 
     def self.walk_submodules(dir, level)
@@ -9,10 +10,10 @@ module Badev
           puts "in #{dir.blue}"
 
           submodules = []
-          submodules = `grep path .gitmodules | sed 's/.*= //'`.split "\n" if File.exists? '.gitmodules'
+          submodules = `grep path .gitmodules | sed 's/.*= //'`.split "\n" if File.exist? '.gitmodules'
           submodules.each do |path|
             sub_path = File.join(dir, path)
-            walk_submodules(sub_path, level+1)
+            walk_submodules(sub_path, level + 1)
           end
 
           indent do
@@ -33,6 +34,5 @@ module Badev
         end
       end
     end
-
   end
 end

@@ -1,12 +1,12 @@
 #!/usr/bin/env ruby
-# coding: utf-8
+# frozen_string_literal: true
 
 # resolve bin path, ignoring symlinks
 require 'pathname'
 bin_dir = File.dirname(Pathname.new(__FILE__).realpath)
 
 # add self to libpath
-$:.unshift File.expand_path('../lib', bin_dir)
+$LOAD_PATH.unshift File.expand_path('../lib', bin_dir)
 
 require 'badev/cli'
 Badev::CLI.start(*ARGV)
