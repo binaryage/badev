@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require 'commander/import'
-require 'colored'
 
 require 'bagen'
+require 'bagen/colored2'
 require 'bagen/helpers'
 require 'bagen/generator'
 

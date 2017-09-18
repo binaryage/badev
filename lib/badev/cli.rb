@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 require 'commander/import'
-require 'colored'
 require 'fileutils'
 require 'pathname'
 
 require 'badev'
+require 'badev/utils/colored2'
 require 'badev/utils/helpers'
 
 require 'badev/commands/xcconfig'

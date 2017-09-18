@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     badev (0.2.0)
-      colored
+      colored2
       commander
       xcodeproj (~> 1.0.0.beta.4)
 
@@ -16,6 +16,7 @@ GEM
       tzinfo (~> 1.1)
     claide (1.0.2)
     colored (1.2)
+    colored2 (3.1.2)
     commander (4.4.3)
       highline (~> 1.7.2)
     concurrent-ruby (1.0.5)
@@ -40,4 +41,4 @@ DEPENDENCIES
   rake
 
 BUNDLED WITH
-   1.15.3
+   1.15.4
