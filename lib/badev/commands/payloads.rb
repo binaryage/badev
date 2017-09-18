@@ -6,7 +6,55 @@ module Badev
 
     TMP_PAYLOADS_DIR = '/tmp/payloads'
 
-    def self.generate_payload_for_pkg(_options, tmp, pkg)
+    module_function
+
+    def generate_tree
+      `tree --dirsfirst -apsugif`
+    end
+
+    def generate_binaries
+      binaries = []
+      Dir.glob('**/*') do |file|
+        next unless File.executable? file
+        next unless `file "#{file}"`.match?(/Mach-O/)
+        binaries << file
+      end
+
+      binaries.reject! { |file| File.symlink? file }
+
+      binaries
+    end
+
+    def generate_exes(binaries)
+      exes = ''
+      binaries.each do |binary|
+        exes += `file "#{binary}"` + "\n"
+      end
+      exes
+    end
+
+    def generate_deps(binaries)
+      deps = ''
+      binaries.each do |binary|
+        lines = `otool -L "#{binary}"`.split("\n")
+        lines = [lines[0]].concat(lines[1..-1].sort)
+        deps += lines.join("\n") + "\n"
+        deps += "\n"
+      end
+      deps
+    end
+
+    def generate_symbols(binaries)
+      symbols = ''
+      binaries.each do |binary|
+        symbols += "nm -aj \"#{binary}\"\n"
+        symbols += `nm -aj "#{binary}"` + "\n"
+        symbols += "\n"
+      end
+      symbols
+    end
+
+    def generate_payload_for_pkg(_options, tmp, pkg)
       tree = ''
       exes = ''
       deps = ''
@@ -34,32 +82,11 @@ module Badev
               sys('cpio -id < Payload')
             end
 
-            tree = `tree --dirsfirst -apsugif`
-            binaries = []
-            Dir.glob('**/*') do |file|
-              next unless File.executable? file
-              next unless `file \"#{file}\"`.match?(/Mach-O/)
-              binaries << file
-            end
-
-            binaries.reject! { |file| File.symlink? file }
-
-            binaries.each do |binary|
-              exes += `file "#{binary}"` + "\n"
-            end
-
-            binaries.each do |binary|
-              lines = `otool -L "#{binary}"`.split("\n")
-              lines = [lines[0]].concat(lines[1..-1].sort)
-              deps += lines.join("\n") + "\n"
-              deps += "\n"
-            end
-
-            binaries.each do |binary|
-              symbols += "nm -aj \"#{binary}\"\n"
-              symbols += `nm -aj "#{binary}"` + "\n"
-              symbols += "\n"
-            end
+            tree = generate_tree
+            binaries = generate_binaries
+            exes = generate_exes(binaries)
+            deps = generate_deps(binaries)
+            symbols = generate_symbols(binaries)
           end
         end
       end
@@ -78,7 +105,7 @@ module Badev
       res
     end
 
-    def self.symbol_obfuscation_partial?(name)
+    def symbol_obfuscation_partial?(name)
       name =~ /\[(.*)\]/
       parts = Regexp.last_match(1).strip.split(' ')
       sel = parts[1]
@@ -91,14 +118,14 @@ module Badev
       false
     end
 
-    def self.symbol_obfuscated?(name)
+    def symbol_obfuscated?(name)
       name =~ /\[(.*)\]/
       parts = Regexp.last_match(1).strip.split(' ')
       sel = parts[1]
       sel =~ /TF\$/
     end
 
-    def self.generate_obfuscation_report(dwarf_folder)
+    def generate_obfuscation_report(dwarf_folder)
       base_dir = File.expand_path(dwarf_folder)
       ignores_file = File.join(base_dir, '.obfuscation-ignores')
       mapping_table_file = File.join(base_dir, 'obfuscation.txt')
@@ -184,7 +211,7 @@ module Badev
       res.join("\n")
     end
 
-    def self.generate_payload(options, dmg, out)
+    def generate_payload(options, dmg, out)
       puts "generating payload for #{dmg.blue}".green
       return if dry_run?
 
@@ -253,7 +280,7 @@ module Badev
       end
     end
 
-    def self.generate_payloads(options)
+    def generate_payloads(options)
       puts "generating payloads in #{options.root.blue}"
       Dir.chdir(options.root) do
         Dir.glob(File.join(options.releases, '*.dmg')).each do |file|
@@ -265,7 +292,7 @@ module Badev
       end
     end
 
-    def self.payload_diff(options)
+    def payload_diff(options)
       puts "diff-ing payloads in #{options.root.blue}"
       indent do
         Dir.chdir(options.root) do
