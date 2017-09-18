@@ -21,6 +21,7 @@ module Badev
       end
 
       binaries.reject! { |file| File.symlink? file }
+      binaries.sort!
 
       binaries
     end
