@@ -8,7 +8,7 @@ COPY_PHASE_STRIP = YES
 // The optimization level (0, 1, 2, 3, s) for the produced binary
 GCC_OPTIMIZATION_LEVEL = fast
 
-// Preproccessor definitions to apply to each file compiled
+// Preprocessor definitions to apply to each file compiled
 <% $shared['GCC_PREPROCESSOR_DEFINITIONS'] << 'NDEBUG=1' %>
 <% $shared['GCC_PREPROCESSOR_DEFINITIONS'] << 'NS_BLOCK_ASSERTIONS=1' %>
 
@@ -23,3 +23,4 @@ STRIP_INSTALLED_PRODUCT = YES
 
 // a lot of debug statements might go away and we don't want warnings generated from them in release builds
 <% $shared['WARNING_CFLAGS'] << '-Wno-unused-variable' %>
+<% $shared['WARNING_CFLAGS'] << '-Wno-dollar-in-identifier-extension' %>
