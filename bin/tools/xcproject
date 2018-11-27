@@ -18,6 +18,7 @@ SUB_RPATHS = %w[Frameworks OtherFrameworks SharedFrameworks].freeze
 def rpath?(rpath, rpaths)
   rpaths.each do |path|
     next unless path == rpath
+
     return true
   end
 end
@@ -27,6 +28,7 @@ def add_rpaths(base, rpaths)
     next if rpath?(XCODE_CONTENTS_PATH + subpath, rpaths)
     next if rpath?(XCODE_DEV_PATH.dirname + subpath, rpaths)
     next if rpath?(base + subpath, rpaths)
+
     rpath = base + subpath
     `install_name_tool -add_rpath #{rpath} "#{XCPROJECT_PATH}"`
   end
