@@ -19,6 +19,7 @@ module Badev
     REMOVE_REL_OSAX_CMD = 'sudo rm -rf /Library/ScriptingAdditions/TotalFinder.osax'
     REMOVE_REL_APP_CMD = 'sudo rm -rf /Applications/TotalFinder.app'
     REMOVE_REL_OSAXSIP_CMD = 'sudo rm -rf /System/Library/ScriptingAdditions/TotalFinderSIP.osax'
+    REMOVE_REL_FILEPROVIDER_CMD = 'sudo rm -rf /System/Library/PrivateFrameworks/FileProvider.framework/OverrideBundles/TotalFinderFileProvider.bundle'
 
     def self.launch_finder(_options)
       sys(ACTIVATE_FINDER_CMD)
@@ -69,6 +70,7 @@ module Badev
     def self.remove_retail(_options)
       sys(REMOVE_REL_OSAX_CMD)
       sys(REMOVE_REL_OSAXSIP_CMD)
+      sys(REMOVE_REL_FILEPROVIDER_CMD)
       sys(REMOVE_REL_APP_CMD)
     end
   end
