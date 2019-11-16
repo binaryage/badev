@@ -10,6 +10,7 @@ module Badev
 
     def self.prefix_header_path(target, root_dir, conf = 'Debug')
       return nil if target.nil? || root_dir.nil?
+
       arg_p = shellescape(target.project.path)
       arg_t = shellescape(target.name)
       arg_c = shellescape(conf)
@@ -24,6 +25,7 @@ module Badev
 
     def self.generated_prefix_header_path(target, root_dir, conf = 'Debug')
       return nil if target.nil?
+
       # get the originally specified precompiled header
       original = prefix_header_path(target, root_dir, conf)
 
@@ -42,6 +44,7 @@ module Badev
 
       dirs.each do |base|
         next unless File.exist? base
+
         Dir.glob(File.join(base, '**/*.xcodeproj')) do |dir|
           xcodeprojs << File.expand_path(dir)
         end
@@ -93,8 +96,10 @@ module Badev
 
     def self.generated_xcconfig_path(xcconfig)
       return '' if xcconfig.nil?
+
       xcconfig = Pathname.new(xcconfig)
       return xcconfig if xcconfig.to_s.match?(/_generated\.xcconfig$/)
+
       xcconfig.dirname.join("#{xcconfig.basename(xcconfig.extname)}_generated.xcconfig").to_s
     end
 
@@ -107,6 +112,7 @@ module Badev
 
     def self.original_xcconfig_include_path(current, xcconfig)
       return '' if current.empty? || (xcconfig == current)
+
       Pathname.new(current).relative_path_from(Pathname.new(xcconfig).dirname).to_s
     end
 
@@ -145,6 +151,7 @@ module Badev
 
           next unless options.add && File.exist?(filename)
           next if original_xcconfig == filename
+
           arg_t = shellescape(target.name)
           arg_c = shellescape(conf.name)
           arg_g = shellescape(options.group)
@@ -157,8 +164,10 @@ module Badev
     def self.convert_generator(path)
       lines = File.read(path).split("\n")
       return unless lines[0].match?(/\/\/!/)
+
       i = lines[0].rindex('>')
       return unless i
+
       lines[0] = lines[0].slice(0, i).rstrip
       content = lines.join("\n")
       File.open(path, 'w') { |file| file.write(content) }
@@ -170,6 +179,7 @@ module Badev
       convert_generator(path)
       lines = File.read(path).split("\n")
       return unless lines[0] =~ /\/\/!(.*)/
+
       Regexp.last_match(1).strip
     end
 
@@ -193,6 +203,7 @@ module Badev
         proj.targets.each do |target|
           target.build_configurations.each do |conf|
             next unless conf.base_configuration_reference
+
             xcconfig = conf.base_configuration_reference.real_path
 
             generator = parse_xcconfig_header(xcconfig.to_s)

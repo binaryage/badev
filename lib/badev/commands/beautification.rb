@@ -41,6 +41,7 @@ module Badev
               files.each do |file|
                 next unless file.match?(/\.(mm|m|c|h|cc|cpp|hpp)$/)
                 next unless file.match?(filter)
+
                 unless File.exist? file
                   puts "#{'skipping'.red} #{file.blue} - no longer exists"
                   next
@@ -53,6 +54,7 @@ module Badev
                   end
                 end
                 next if matched_some_exclude
+
                 reformat(options, file)
               end
             end

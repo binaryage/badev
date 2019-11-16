@@ -17,6 +17,7 @@ module Badev
       Dir.glob('**/*') do |file|
         next unless File.executable? file
         next unless `file "#{file}"`.match?(/Mach-O/)
+
         binaries << file
       end
 
@@ -111,6 +112,7 @@ module Badev
       parts = Regexp.last_match(1).strip.split(' ')
       sel = parts[1]
       return false unless sel.match?(/^TF\$/)
+
       chunks = sel.split(':')
       chunks.each do |chunk|
         next if chunk.empty?
@@ -143,8 +145,10 @@ module Badev
       ignores_data.each do |sre|
         meat = sre.split('#')[0] # strip comments
         next unless meat
+
         meat.strip!
         next if meat.empty? # skip empty lines
+
         subexprs << Regexp.new(meat)
       end
       ignores_regexps = Regexp.union(subexprs)
@@ -227,6 +231,7 @@ module Badev
         volume = ''
         res.each_line do |line|
           next unless line.include?(TMP_PAYLOADS_DIR)
+
           volume = line.split("\t")[2].strip
           break
         end
@@ -289,6 +294,7 @@ module Badev
           name = File.basename(file, '.dmg')
           dest = File.join(options.payloads, name + '.txt')
           next if !options.force && File.exist?(dest)
+
           generate_payload(options, file, dest)
         end
       end

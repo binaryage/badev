@@ -60,6 +60,7 @@ module Badev
         volume = ''
         res.each_line do |line|
           next unless line.match?(/Apple_HFS/)
+
           volume = line.split("\t")[2].strip
           break
         end

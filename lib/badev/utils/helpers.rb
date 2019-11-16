@@ -20,8 +20,8 @@ module Badev
       @@indent = previous_indent
     end
 
-    def puts(x)
-      Kernel.puts @@indent + x.to_s
+    def puts(thing)
+      Kernel.puts @@indent + thing.to_s
     end
 
     def print_indented(text)
@@ -71,6 +71,7 @@ module Badev
     def shellescape(str)
       # An empty argument will be skipped, so return empty quotes.
       return "''" if str.nil?
+
       str = str.to_s unless str.is_a?(String) && str.respond_to?('to_s', true)
       return "''" if str.empty?
 
@@ -96,14 +97,14 @@ module Badev
       revision[0...7]
     end
 
-    def release_version_from_filename(n, ext = '.txt')
-      # n == /Users/darwin/code/totalfinder/payloads/TotalFinder-0.7.1.txt
-      p = File.basename(n, ext).split('-')[1]
-      n = p.split('.')
-      n << '0' while n.size < 3
-      x = (n[0] || '0').to_i
-      y = (n[1] || '0').to_i
-      z = (n[2] || '0').to_i
+    def release_version_from_filename(path, ext = '.txt')
+      # path == /Users/darwin/code/totalfinder/payloads/TotalFinder-0.7.1.txt
+      p = File.basename(path, ext).split('-')[1]
+      path = p.split('.')
+      path << '0' while path.size < 3
+      x = (path[0] || '0').to_i
+      y = (path[1] || '0').to_i
+      z = (path[2] || '0').to_i
       x * 1_000_000 + y * 1000 + z
     end
 
@@ -111,6 +112,7 @@ module Badev
       if File.exist? 'totalfinder/.dwarfs'
         return File.expand_path(File.read('totalfinder/.dwarfs').strip) # HACK: for TotalFinder
       end
+
       unless File.exist? '.dwarfs'
         puts ".dwarfs file is not present in #{Dir.pwd.blue}".red
         return nil
