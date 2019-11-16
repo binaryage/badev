@@ -4,6 +4,7 @@ AllCops:
     - '**/Gemfile'
     - '**/Rakefile'
     - '**/rakefile'
+    - 'lib/**/*.rb'
     - 'bin/badev'
     - 'bin/bagen'
   Exclude:
