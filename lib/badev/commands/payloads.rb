@@ -251,6 +251,7 @@ module Badev
           dwarfs_base = read_dwarfs_base_dir
           if dwarfs_base
             name = File.basename(dmg, '.dmg')
+            name = File.basename(name, '.no-staple')
             ver = name.split('-')[1]
             obfuscation_report = generate_obfuscation_report(File.join(dwarfs_base, ver))
           end
