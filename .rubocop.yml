@@ -1,5 +1,5 @@
 AllCops:
-  TargetRubyVersion: 2.5
+  TargetRubyVersion: 2.7
   Include:
     - '**/Gemfile'
     - '**/Rakefile'
@@ -13,7 +13,7 @@ AllCops:
     - 'configs'
     - 'bin'
 
-Metrics/LineLength:
+Layout/LineLength:
   Max: 126
 
 Style/RescueStandardError:
@@ -54,3 +54,12 @@ Style/RegexpLiteral:
 
 Style/ClassVars:
   Enabled: false
+
+Style/HashEachMethods:
+  Enabled: true
+
+Style/HashTransformKeys:
+  Enabled: true
+
+Style/HashTransformValues:
+  Enabled: true
