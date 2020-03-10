@@ -26,3 +26,9 @@ task :update_readme do
   File.write('README.md', new_readme.join)
   puts 'README.md updated'
 end
+
+desc 'install locally'
+task :install do
+  `gem build`
+  `gem install badev-*.gem`
+end
