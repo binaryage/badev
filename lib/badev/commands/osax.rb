@@ -5,7 +5,7 @@ module Badev
     extend Badev::Helpers
 
     AUTHORIZE_SEND_CMD = 'sudo security authorizationdb write com.apple.OpenScripting.additions.send allow'
-    DEAUTHORIZE_SEND_CMD = 'sudo security authorizationdb write com.apple.OpenScripting.additions.send remove'
+    DEAUTHORIZE_SEND_CMD = 'sudo security authorizationdb remove com.apple.OpenScripting.additions.send'
 
     def self.authorize_send(_options)
       sys(AUTHORIZE_SEND_CMD)
