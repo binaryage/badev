@@ -16,3 +16,4 @@ tmp
 /.idea/
 .rubocop_todo.yml
 badev-*.gem
+*.iml
