@@ -313,7 +313,7 @@ module Badev
             vb <=> va
           end
 
-          sys("\"#{options.differ}\" \"#{res[1]}\" \"#{res[0]}\"")
+          sys("#{options.differ} \"#{res[1]}\" \"#{res[0]}\"")
         end
       end
     end

@@ -85,7 +85,7 @@ module Badev
         c.option '--differ PATH', String, 'Specify a diff program to use'
         c.action do |_args, options|
           options.default root: Dir.pwd
-          options.default differ: 'ksdiff'
+          options.default differ: 'idea diff'
           options.default payloads: 'payloads'
           Badev::Payloads.payload_diff(options)
         end
