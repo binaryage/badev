@@ -84,7 +84,10 @@ module Badev
     end
 
     def self.copy_dwarfs(source)
-      die "dwarfs missing in #{source.blue}" unless File.exist? source
+      unless File.exist? source
+        puts "dwarfs missing in #{source.blue}"
+        return
+      end
       sys('rm -rf dwarfs') if File.exist? 'dwarfs'
       sys('mkdir dwarfs')
       sys("cp -a \"#{source}\"/* dwarfs")
@@ -105,7 +108,7 @@ module Badev
 
     def self.copy_payload(payloads, name)
       sys('rm payload.txt') if File.exist? 'payload.txt'
-      payload = File.join(payloads, name + '.txt')
+      payload = File.join(payloads, "#{name}.txt")
       if File.exist? payload
         sys("cp \"#{payload}\" payload.txt")
       else

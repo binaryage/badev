@@ -20,7 +20,7 @@ module Badev
     REMOVE_REL_APP_CMD = 'sudo rm -rf /Applications/TotalFinder.app'
     REMOVE_REL_OSAXSIP_CMD = 'sudo rm -rf /System/Library/ScriptingAdditions/TotalFinderSIP.osax'
     OVERRIDE_BUNDLES_DIR = '/System/Library/PrivateFrameworks/FileProvider.framework/OverrideBundles'
-    REMOVE_REL_FILEPROVIDER_CMD = "sudo rm -rf #{OVERRIDE_BUNDLES_DIR}/TotalFinderFileProvider.bundle"
+    REMOVE_REL_FILEPROVIDER_CMD = "sudo rm -rf #{OVERRIDE_BUNDLES_DIR}/TotalFinderFileProvider.bundle".freeze
 
     def self.launch_finder(_options)
       sys(ACTIVATE_FINDER_CMD)

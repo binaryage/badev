@@ -3,7 +3,7 @@
 require 'badev/version'
 
 module Badev
-  USER_AGENT = "badev/#{Badev::VERSION} (#{RUBY_PLATFORM}) ruby/#{RUBY_VERSION}"
+  USER_AGENT = "badev/#{Badev::VERSION} (#{RUBY_PLATFORM}) ruby/#{RUBY_VERSION}".freeze
 
   BASE_DIR = File.expand_path(File.join(File.dirname(__FILE__), '..'))
   BIN_DIR = File.join(BASE_DIR, 'bin')

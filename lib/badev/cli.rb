@@ -42,7 +42,7 @@ module Badev
         c.option '--no-dwarfs', 'Do not include DWARFs'
         c.action do |_args, options|
           options.default root: Dir.pwd
-          options.default archive: File.expand_path(File.join(options.root, '..', File.basename(options.root) + '-archive'))
+          options.default archive: File.expand_path(File.join(options.root, '..', "#{File.basename(options.root)}-archive"))
           options.default releases: 'releases'
           options.default payloads: 'payloads'
           options.default otable: 'obfuscation.txt'
@@ -57,7 +57,7 @@ module Badev
         c.option '--archive PATH', String, 'Specify a path for archive'
         c.action do |_args, options|
           options.default root: Dir.pwd
-          options.default archive: File.expand_path(File.join(options.root, '..', File.basename(options.root) + '-archive'))
+          options.default archive: File.expand_path(File.join(options.root, '..', "#{File.basename(options.root)}-archive"))
           Badev::Archiving.push_archive(options)
         end
       end

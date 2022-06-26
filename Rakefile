@@ -7,7 +7,7 @@ task :update_readme do
   help = `bin/badev --help`
   indented_help = "\n"
   help.each_line do |line|
-    indented_help = indented_help + '  ' + line
+    indented_help = "#{indented_help}  #{line}"
   end
 
   readme = File.read('README.md')

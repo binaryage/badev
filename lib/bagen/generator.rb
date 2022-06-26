@@ -44,7 +44,7 @@ module Bagen
     def self.generate(args, options)
       template = args[0]
       output = options.output
-      template_path = File.join(templates_dir, template + '.xcconfig.erb')
+      template_path = File.join(templates_dir, "#{template}.xcconfig.erb")
       die "required template does not exists at #{template_path.yellow}" unless File.exist? template_path
 
       header = <<~XCCONFIG_HEADER

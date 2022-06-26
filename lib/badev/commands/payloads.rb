@@ -30,7 +30,7 @@ module Badev
     def generate_exes(binaries)
       exes = ''
       binaries.each do |binary|
-        exes += `file "#{binary}"` + "\n"
+        exes += "#{`file "#{binary}"`}\n"
       end
       exes
     end
@@ -39,8 +39,8 @@ module Badev
       deps = ''
       binaries.each do |binary|
         lines = `otool -L "#{binary}"`.split("\n")
-        lines = [lines[0]].concat(lines[1..-1].sort)
-        deps += lines.join("\n") + "\n"
+        lines = [lines[0]].concat(lines[1..].sort)
+        deps += "#{lines.join("\n")}\n"
         deps += "\n"
       end
       deps
@@ -50,7 +50,7 @@ module Badev
       symbols = ''
       binaries.each do |binary|
         symbols += "nm -aj \"#{binary}\"\n"
-        symbols += `nm -aj "#{binary}"` + "\n"
+        symbols += "#{`nm -aj "#{binary}"`}\n"
         symbols += "\n"
       end
       symbols
@@ -292,7 +292,7 @@ module Badev
       Dir.chdir(options.root) do
         Dir.glob(File.join(options.releases, '*.dmg')).each do |file|
           name = File.basename(file, '.dmg')
-          dest = File.join(options.payloads, name + '.txt')
+          dest = File.join(options.payloads, "#{name}.txt")
           next if !options.force && File.exist?(dest)
 
           generate_payload(options, file, dest)

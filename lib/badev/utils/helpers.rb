@@ -55,9 +55,7 @@ module Badev
           print_indented(output) unless silenced
         end
 
-        unless status.success?
-          die("failed with code #{status.exitstatus}", status.exitstatus) unless soft
-        end
+        die("failed with code #{status.exitstatus}", status.exitstatus) if !status.success? && !soft
       end
 
       output

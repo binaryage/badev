@@ -44,14 +44,13 @@ def find_rpaths
 end
 
 # catch any exceptions thrown by this procedure and just execute _xcproject as is
-begin
-  if XCODE_DEV_PATH.exist? || ENV['xcode']
-    rpaths = find_rpaths
-    xcode_path = ENV['xcode'] || XCODE_CONTENTS_PATH
-    add_rpaths(xcode_path, rpaths)
-  else
-    puts "Unable to locate Xcode, RPATH checking requires it. Use 'xcode-select -s path/to/Xcode.app' to fix this"
-  end
+
+if XCODE_DEV_PATH.exist? || ENV['xcode']
+  rpaths = find_rpaths
+  xcode_path = ENV['xcode'] || XCODE_CONTENTS_PATH
+  add_rpaths(xcode_path, rpaths)
+else
+  puts "Unable to locate Xcode, RPATH checking requires it. Use 'xcode-select -s path/to/Xcode.app' to fix this"
 end
 
 exec(XCPROJECT_PATH, *ARGV)

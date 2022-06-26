@@ -16,9 +16,7 @@ module Badev
       arg_c = shellescape(conf)
       original_pch = `#{XCPROJECT} print-settings -e -p #{arg_p} -t #{arg_t} -c #{arg_c} GCC_PREFIX_HEADER`.strip
       original = Pathname.new(original_pch)
-      if original.absolute?
-        return nil unless original_pch.match?(/^#{root_dir}/)
-      end
+      return nil if original.absolute? && !original_pch.match?(/^#{root_dir}/)
 
       original
     end
@@ -87,7 +85,7 @@ module Badev
       settings_list.each do |settings|
         export += "\n"
         settings.each do |key, value|
-          export += '// ' + make_xcconfig_line(key, value) + "\n"
+          export += "// #{make_xcconfig_line(key, value)}\n"
         end
       end
 
@@ -135,7 +133,7 @@ module Badev
 
           # TODO: here we should sanitize filenames for bad characters
           filename = File.join(dest, "#{basename}_#{conf.name}_#{target.name}.xcconfig")
-          destname = (File.basename filename, '.xcconfig') + '_generated.xcconfig'
+          destname = "#{File.basename filename, '.xcconfig'}_generated.xcconfig"
           original_xcconfig = original_xcconfig_path(target, conf)
           if File.exist? filename
             puts "#{filename.blue} already exists => skipping"
@@ -145,7 +143,7 @@ module Badev
             configuration = conf.name
             content = build_default_xcconfig(destname, basename, configuration, target.name, settings, xcconfig)
             File.open(filename, 'w') { |file| file.write(content) }
-            relpath = './' + Pathname.new(filename).relative_path_from(Pathname.pwd).to_s
+            relpath = "./#{Pathname.new(filename).relative_path_from(Pathname.pwd)}"
             puts "generated: #{relpath.yellow}"
           end
 
