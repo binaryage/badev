@@ -2,7 +2,6 @@
 
 require 'pathname'
 require 'xcodeproj'
-require 'pp'
 require 'fileutils'
 require 'erb'
 
